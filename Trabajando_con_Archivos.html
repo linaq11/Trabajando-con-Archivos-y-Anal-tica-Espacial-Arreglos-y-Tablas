@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.550">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Lina María Quintero Fonseca">
+<meta name="dcterms.date" content="2026-03-15">
+
+<title>Capítulo 10 – Trabajando con Archivos: Ejercicios</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="Trabajando_con_Archivos_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Trabajando_con_Archivos_files/libs/quarto-html/quarto.js"></script>
+<script src="Trabajando_con_Archivos_files/libs/quarto-html/popper.min.js"></script>
+<script src="Trabajando_con_Archivos_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Trabajando_con_Archivos_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Trabajando_con_Archivos_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Trabajando_con_Archivos_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Trabajando_con_Archivos_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Trabajando_con_Archivos_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Trabajando_con_Archivos_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introducción" id="toc-introducción" class="nav-link active" data-scroll-target="#introducción">Introducción</a></li>
+  <li><a href="#ejercicio-1-limpiando-un-inventario-forestal-io-y-excepciones" id="toc-ejercicio-1-limpiando-un-inventario-forestal-io-y-excepciones" class="nav-link" data-scroll-target="#ejercicio-1-limpiando-un-inventario-forestal-io-y-excepciones">Ejercicio 1: Limpiando un inventario forestal (I/O y Excepciones)</a>
+  <ul class="collapse">
+  <li><a href="#paso-1-crear-el-archivo-arboles_crudos.txt" id="toc-paso-1-crear-el-archivo-arboles_crudos.txt" class="nav-link" data-scroll-target="#paso-1-crear-el-archivo-arboles_crudos.txt">Paso 1: Crear el archivo <code>arboles_crudos.txt</code></a></li>
+  <li><a href="#paso-2-función-limpiar_inventario" id="toc-paso-2-función-limpiar_inventario" class="nav-link" data-scroll-target="#paso-2-función-limpiar_inventario">Paso 2: Función <code>limpiar_inventario</code></a></li>
+  <li><a href="#verificación-del-archivo-limpio" id="toc-verificación-del-archivo-limpio" class="nav-link" data-scroll-target="#verificación-del-archivo-limpio">Verificación del archivo limpio</a></li>
+  </ul></li>
+  <li><a href="#ejercicio-2-analizando-datos-estructurados-diccionarios-y-listas" id="toc-ejercicio-2-analizando-datos-estructurados-diccionarios-y-listas" class="nav-link" data-scroll-target="#ejercicio-2-analizando-datos-estructurados-diccionarios-y-listas">Ejercicio 2: Analizando datos estructurados (Diccionarios y Listas)</a>
+  <ul class="collapse">
+  <li><a href="#función-cargar_datos_espaciales" id="toc-función-cargar_datos_espaciales" class="nav-link" data-scroll-target="#función-cargar_datos_espaciales">Función <code>cargar_datos_espaciales</code></a></li>
+  <li><a href="#cálculo-de-la-latitud-promedio" id="toc-cálculo-de-la-latitud-promedio" class="nav-link" data-scroll-target="#cálculo-de-la-latitud-promedio">Cálculo de la latitud promedio</a></li>
+  </ul></li>
+  <li><a href="#preguntas-analíticas" id="toc-preguntas-analíticas" class="nav-link" data-scroll-target="#preguntas-analíticas">Preguntas analíticas</a>
+  <ul class="collapse">
+  <li><a href="#sobre-el-ejercicio-1-manejo-de-excepciones" id="toc-sobre-el-ejercicio-1-manejo-de-excepciones" class="nav-link" data-scroll-target="#sobre-el-ejercicio-1-manejo-de-excepciones">Sobre el Ejercicio 1: Manejo de Excepciones</a></li>
+  <li><a href="#sobre-la-gestión-de-recursos-io" id="toc-sobre-la-gestión-de-recursos-io" class="nav-link" data-scroll-target="#sobre-la-gestión-de-recursos-io">Sobre la Gestión de Recursos (I/O)</a></li>
+  <li><a href="#sobre-la-limpieza-de-datos" id="toc-sobre-la-limpieza-de-datos" class="nav-link" data-scroll-target="#sobre-la-limpieza-de-datos">Sobre la Limpieza de Datos</a></li>
+  </ul></li>
+  <li><a href="#limpieza-de-archivos-temporales" id="toc-limpieza-de-archivos-temporales" class="nav-link" data-scroll-target="#limpieza-de-archivos-temporales">Limpieza de archivos temporales</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="Trabajando_con_Archivos.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Capítulo 10 – Trabajando con Archivos: Ejercicios</h1>
+<p class="subtitle lead">Programación SIG</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Lina María Quintero Fonseca </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">March 15, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introducción" class="level2">
+<h2 class="anchored" data-anchor-id="introducción">Introducción</h2>
+<p>En este documento se resuelven los dos ejercicios propuestos en el Capítulo 10 del curso de Programación SIG, enfocados en el manejo robusto de archivos, excepciones y estructuración de datos espaciales en Python.</p>
+<hr>
+</section>
+<section id="ejercicio-1-limpiando-un-inventario-forestal-io-y-excepciones" class="level2">
+<h2 class="anchored" data-anchor-id="ejercicio-1-limpiando-un-inventario-forestal-io-y-excepciones">Ejercicio 1: Limpiando un inventario forestal (I/O y Excepciones)</h2>
+<section id="paso-1-crear-el-archivo-arboles_crudos.txt" class="level3">
+<h3 class="anchored" data-anchor-id="paso-1-crear-el-archivo-arboles_crudos.txt">Paso 1: Crear el archivo <code>arboles_crudos.txt</code></h3>
+<p>Primero, creamos programáticamente el archivo de texto con los datos crudos del inventario, incluyendo los errores intencionales en las coordenadas.</p>
+<div id="e5aa2a46" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Datos crudos del inventario forestal (con errores intencionales)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>datos_crudos <span class="op">=</span> <span class="st">"""Especie,Latitud,Longitud</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="st">Roble,4.6097,-74.0817</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="st">Pino,4.6XYZ,-74.0900</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="st">Cedro,4.6150,-74.0850</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="st">Eucalipto,NULA,-74.0700</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="st">Nogal,4.6200,-74.0650"""</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>f_crudos <span class="op">=</span> <span class="st">"arboles_crudos.txt"</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(f_crudos, <span class="st">"w"</span>, encoding<span class="op">=</span><span class="st">"utf-8"</span>) <span class="im">as</span> con:</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        _ <span class="op">=</span> con.write(datos_crudos)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Archivo '</span><span class="sc">{</span>f_crudos<span class="sc">}</span><span class="ss">' creado exitosamente."</span>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Error al crear el archivo: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Archivo 'arboles_crudos.txt' creado exitosamente.</code></pre>
+</div>
+</div>
+</section>
+<section id="paso-2-función-limpiar_inventario" class="level3">
+<h3 class="anchored" data-anchor-id="paso-2-función-limpiar_inventario">Paso 2: Función <code>limpiar_inventario</code></h3>
+<p>Esta función lee el archivo crudo línea por línea, omite el encabezado, y utiliza <code>try-except</code> para intentar convertir las coordenadas a <code>float</code>. Las líneas válidas se escriben en <code>arboles_limpios.csv</code>; las inválidas se reportan en consola.</p>
+<div id="e7a5f6e7" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> limpiar_inventario(f_entrada, f_salida):</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Lee un archivo de inventario forestal con posibles errores y genera</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">    un archivo limpio únicamente con los registros válidos.</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">    Argumentos:</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">        f_entrada (str): Ruta del archivo crudo de entrada.</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">        f_salida  (str): Ruta del archivo limpio de salida.</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">    Retorna:</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">        tuple: (int, int) con la cantidad de registros válidos y errores.</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    validos <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    errores <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> <span class="bu">open</span>(f_entrada, <span class="st">"r"</span>, encoding<span class="op">=</span><span class="st">"utf-8"</span>) <span class="im">as</span> con_in, <span class="op">\</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>             <span class="bu">open</span>(f_salida, <span class="st">"w"</span>, encoding<span class="op">=</span><span class="st">"utf-8"</span>) <span class="im">as</span> con_out:</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>            lineas <span class="op">=</span> con_in.readlines()</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Escribimos el encabezado en el archivo de salida</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>            _ <span class="op">=</span> con_out.write(<span class="st">"Especie,Latitud,Longitud</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Iteramos desde la línea 2 (omitimos encabezado con slicing [1:])</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> num_linea, linea <span class="kw">in</span> <span class="bu">enumerate</span>(lineas[<span class="dv">1</span>:], <span class="dv">2</span>):</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>                linea_limpia <span class="op">=</span> linea.strip()</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>                <span class="co"># Omitir líneas vacías</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="kw">not</span> linea_limpia:</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">continue</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>                <span class="cf">try</span>:</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>                    partes <span class="op">=</span> linea_limpia.split(<span class="st">","</span>)</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># Verificamos que haya exactamente 3 campos</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">if</span> <span class="bu">len</span>(partes) <span class="op">!=</span> <span class="dv">3</span>:</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>                        <span class="cf">raise</span> <span class="pp">ValueError</span>(</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>                            <span class="ss">f"Se esperaban 3 campos, se encontraron </span><span class="sc">{</span><span class="bu">len</span>(partes)<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>                        )</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>                    especie <span class="op">=</span> partes[<span class="dv">0</span>].strip()</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>                    latitud <span class="op">=</span> <span class="bu">float</span>(partes[<span class="dv">1</span>].strip())   <span class="co"># Puede lanzar ValueError</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>                    longitud <span class="op">=</span> <span class="bu">float</span>(partes[<span class="dv">2</span>].strip())   <span class="co"># Puede lanzar ValueError</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># Si llegamos aquí, la conversión fue exitosa</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>                    _ <span class="op">=</span> con_out.write(<span class="ss">f"</span><span class="sc">{</span>especie<span class="sc">}</span><span class="ss">,</span><span class="sc">{</span>latitud<span class="sc">}</span><span class="ss">,</span><span class="sc">{</span>longitud<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>                    validos <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>                <span class="cf">except</span> <span class="pp">ValueError</span> <span class="im">as</span> e:</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># Extraemos el nombre de la especie aunque falle la conversión</span></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>                    especie_error <span class="op">=</span> partes[<span class="dv">0</span>].strip() <span class="cf">if</span> partes <span class="cf">else</span> <span class="st">"Desconocida"</span></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>                    <span class="bu">print</span>(</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>                        <span class="ss">f"  ADVERTENCIA (línea </span><span class="sc">{</span>num_linea<span class="sc">}</span><span class="ss">): "</span></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>                        <span class="ss">f"Especie '</span><span class="sc">{</span>especie_error<span class="sc">}</span><span class="ss">' omitida -&gt; </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>                    )</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>                    errores <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">FileNotFoundError</span>:</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Error: El archivo '</span><span class="sc">{</span>f_entrada<span class="sc">}</span><span class="ss">' no fue encontrado."</span>)</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> (<span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Error inesperado: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> (<span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (validos, errores)</span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Ejecución ---</span></span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Iniciando limpieza del inventario forestal...</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>f_crudos <span class="op">=</span> <span class="st">"arboles_crudos.txt"</span></span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>f_limpios <span class="op">=</span> <span class="st">"arboles_limpios.csv"</span></span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>validos, errores <span class="op">=</span> limpiar_inventario(f_crudos, f_limpios)</span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">--- Resumen de limpieza ---"</span>)</span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Registros válidos guardados: </span><span class="sc">{</span>validos<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Registros con errores omitidos: </span><span class="sc">{</span>errores<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Archivo limpio generado: '</span><span class="sc">{</span>f_limpios<span class="sc">}</span><span class="ss">'"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Iniciando limpieza del inventario forestal...
+
+  ADVERTENCIA (línea 3): Especie 'Pino' omitida -&gt; could not convert string to float: '4.6XYZ'
+  ADVERTENCIA (línea 5): Especie 'Eucalipto' omitida -&gt; could not convert string to float: 'NULA'
+
+--- Resumen de limpieza ---
+Registros válidos guardados: 3
+Registros con errores omitidos: 2
+Archivo limpio generado: 'arboles_limpios.csv'</code></pre>
+</div>
+</div>
+</section>
+<section id="verificación-del-archivo-limpio" class="level3">
+<h3 class="anchored" data-anchor-id="verificación-del-archivo-limpio">Verificación del archivo limpio</h3>
+<p>Leemos y mostramos el contenido del archivo generado para confirmar que solo contiene registros válidos.</p>
+<div id="7dbfd597" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Contenido de 'arboles_limpios.csv':</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">"arboles_limpios.csv"</span>, <span class="st">"r"</span>, encoding<span class="op">=</span><span class="st">"utf-8"</span>) <span class="im">as</span> f:</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(f.read())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Contenido de 'arboles_limpios.csv':
+
+Especie,Latitud,Longitud
+Roble,4.6097,-74.0817
+Cedro,4.615,-74.085
+Nogal,4.62,-74.065
+</code></pre>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="ejercicio-2-analizando-datos-estructurados-diccionarios-y-listas" class="level2">
+<h2 class="anchored" data-anchor-id="ejercicio-2-analizando-datos-estructurados-diccionarios-y-listas">Ejercicio 2: Analizando datos estructurados (Diccionarios y Listas)</h2>
+<section id="función-cargar_datos_espaciales" class="level3">
+<h3 class="anchored" data-anchor-id="función-cargar_datos_espaciales">Función <code>cargar_datos_espaciales</code></h3>
+<p>Esta función lee el archivo limpio, construye un diccionario por cada registro y los almacena en una lista principal.</p>
+<div id="c446820d" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cargar_datos_espaciales(nombre_archivo):</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Lee un archivo CSV limpio de árboles y retorna una lista de diccionarios</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">    con las llaves 'especie', 'latitud' y 'longitud'.</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">    Argumentos:</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">        nombre_archivo (str): Ruta del archivo CSV limpio.</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">    Retorna:</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">        list[dict]: Lista de diccionarios con la información de cada árbol.</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    arboles <span class="op">=</span> []</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> <span class="bu">open</span>(nombre_archivo, <span class="st">"r"</span>, encoding<span class="op">=</span><span class="st">"utf-8"</span>) <span class="im">as</span> con:</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>            lineas <span class="op">=</span> con.readlines()</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Omitimos el encabezado con slicing [1:]</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> num_linea, linea <span class="kw">in</span> <span class="bu">enumerate</span>(lineas[<span class="dv">1</span>:], <span class="dv">2</span>):</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>                linea_limpia <span class="op">=</span> linea.strip()</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="kw">not</span> linea_limpia:</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">continue</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>                <span class="cf">try</span>:</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>                    partes <span class="op">=</span> linea_limpia.split(<span class="st">","</span>)</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">if</span> <span class="bu">len</span>(partes) <span class="op">==</span> <span class="dv">3</span>:</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>                        arboles.append({</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>                            <span class="st">"especie"</span>:  partes[<span class="dv">0</span>].strip(),</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>                            <span class="st">"latitud"</span>:  <span class="bu">float</span>(partes[<span class="dv">1</span>].strip()),</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>                            <span class="st">"longitud"</span>: <span class="bu">float</span>(partes[<span class="dv">2</span>].strip())</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>                        })</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>                <span class="cf">except</span> <span class="pp">ValueError</span> <span class="im">as</span> e:</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>                    <span class="bu">print</span>(<span class="ss">f"  Advertencia (línea </span><span class="sc">{</span>num_linea<span class="sc">}</span><span class="ss">): </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">continue</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">FileNotFoundError</span>:</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Error: El archivo '</span><span class="sc">{</span>nombre_archivo<span class="sc">}</span><span class="ss">' no fue encontrado."</span>)</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> []</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Error inesperado: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> []</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> arboles</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Ejecución ---</span></span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>lista_arboles <span class="op">=</span> cargar_datos_espaciales(<span class="st">"arboles_limpios.csv"</span>)</span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Se cargaron </span><span class="sc">{</span><span class="bu">len</span>(lista_arboles)<span class="sc">}</span><span class="ss"> árboles válidos:</span><span class="ch">\n</span><span class="ss">"</span>)</span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> arbol <span class="kw">in</span> lista_arboles:</span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(</span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"  - </span><span class="sc">{</span>arbol[<span class="st">'especie'</span>]<span class="sc">}</span><span class="ss">: "</span></span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"(</span><span class="sc">{</span>arbol[<span class="st">'latitud'</span>]<span class="sc">:.4f}</span><span class="ss">, </span><span class="sc">{</span>arbol[<span class="st">'longitud'</span>]<span class="sc">:.4f}</span><span class="ss">)"</span></span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Se cargaron 3 árboles válidos:
+
+  - Roble: (4.6097, -74.0817)
+  - Cedro: (4.6150, -74.0850)
+  - Nogal: (4.6200, -74.0650)</code></pre>
+</div>
+</div>
+</section>
+<section id="cálculo-de-la-latitud-promedio" class="level3">
+<h3 class="anchored" data-anchor-id="cálculo-de-la-latitud-promedio">Cálculo de la latitud promedio</h3>
+<p>Recorremos la lista de diccionarios para calcular programáticamente el promedio de las latitudes.</p>
+<div id="c7674968" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> lista_arboles:</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    suma_latitudes <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> arbol <span class="kw">in</span> lista_arboles:</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        suma_latitudes <span class="op">+=</span> arbol[<span class="st">"latitud"</span>]</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    latitud_promedio <span class="op">=</span> suma_latitudes <span class="op">/</span> <span class="bu">len</span>(lista_arboles)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Latitud promedio de los </span><span class="sc">{</span><span class="bu">len</span>(lista_arboles)<span class="sc">}</span><span class="ss"> árboles válidos: "</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"</span><span class="sc">{</span>latitud_promedio<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"No se encontraron árboles válidos para calcular el promedio."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Latitud promedio de los 3 árboles válidos: 4.6149</code></pre>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="preguntas-analíticas" class="level2">
+<h2 class="anchored" data-anchor-id="preguntas-analíticas">Preguntas analíticas</h2>
+<section id="sobre-el-ejercicio-1-manejo-de-excepciones" class="level3">
+<h3 class="anchored" data-anchor-id="sobre-el-ejercicio-1-manejo-de-excepciones">Sobre el Ejercicio 1: Manejo de Excepciones</h3>
+<p><strong>¿Por qué usar bloques <code>try...except</code> en lugar de dejar que el intérprete arroje un error por defecto?</strong></p>
+<p>En el procesamiento de datos espaciales reales, los archivos suelen contener miles o cientos de miles de registros, y es prácticamente inevitable que algunos presenten errores de formato: valores nulos, letras en campos numéricos, comas faltantes o campos extra. Si no se implementa manejo de excepciones, el intérprete detendrá la ejecución completa del programa al encontrar el primer error.</p>
+<p>Consideremos el escenario planteado: un archivo con 500,000 registros donde el registro 499,999 contiene un error tipográfico. Sin <code>try...except</code>, el programa procesaría exitosamente 499,998 líneas y luego colapsaría, perdiendo todo el trabajo realizado si no se guardó progresivamente, y dejando sin procesar el último registro válido (el 500,000). Todo el tiempo de cómputo invertido se desperdiciaría.</p>
+<p>Con bloques <code>try...except</code>, el programa puede capturar el error en esa línea específica, registrar una advertencia (qué línea falló y por qué) y continuar procesando las líneas restantes sin interrupción. Esta es una práctica esencial para construir herramientas de geoprocesamiento robustas y automatizadas, donde la regla es que los datos son “sucios” por naturaleza.</p>
+</section>
+<section id="sobre-la-gestión-de-recursos-io" class="level3">
+<h3 class="anchored" data-anchor-id="sobre-la-gestión-de-recursos-io">Sobre la Gestión de Recursos (I/O)</h3>
+<p><strong>Comparación de cierre automático de archivos: Python vs Julia vs R</strong></p>
+<p>Python (<code>with open(...) as f:</code>) y Julia (<code>open(...) do f ... end</code>) implementan un patrón de manejo seguro de recursos conocido como <em>context manager</em>. La conexión al archivo se cierra automáticamente al salir del bloque, incluso si ocurre una excepción dentro de él. Esto garantiza que el recurso del sistema operativo se libere correctamente en todos los escenarios posibles.</p>
+<p>En R, el cierre del archivo requiere una llamada explícita a <code>close(con)</code>. Si el programador olvida esta llamada, o si ocurre un error antes de llegar a ella, la conexión permanece abierta. R emite advertencias al respecto cuando detecta conexiones sin cerrar, pero en un flujo de geoprocesamiento continuo donde se abren y procesan archivos de forma iterativa (por ejemplo, procesando cientos de shapefiles o capas ráster en un ciclo), las conexiones abiertas acumuladas pueden causar problemas:</p>
+<ul>
+<li><p><strong>Bloqueo de archivos</strong>: El sistema operativo puede impedir que otros procesos (o el mismo script en una segunda ejecución) accedan al archivo aún abierto.</p></li>
+<li><p><strong>Consumo de recursos</strong>: Cada conexión abierta consume un <em>file descriptor</em> del sistema operativo, y estos son finitos. Si se agotan, el programa colapsará al intentar abrir un nuevo archivo.</p></li>
+<li><p><strong>Corrupción de datos</strong>: En archivos abiertos en modo escritura, los datos pueden no escribirse completamente a disco (<em>flush</em>) si la conexión no se cierra adecuadamente.</p></li>
+</ul>
+<p>Por estas razones, siempre se debe usar <code>with open(...)</code> en Python, <code>open(...) do</code> en Julia, o garantizar el uso de <code>close()</code> dentro de un bloque <code>tryCatch</code> con argumento <code>finally</code> en R.</p>
+</section>
+<section id="sobre-la-limpieza-de-datos" class="level3">
+<h3 class="anchored" data-anchor-id="sobre-la-limpieza-de-datos">Sobre la Limpieza de Datos</h3>
+<p><strong>¿Cuál es la función de <code>strip()</code> y <code>split()</code> al crear bases de datos a partir de texto plano?</strong></p>
+<p><code>strip()</code> (o <code>trimws()</code> en R) elimina los caracteres de espacio en blanco invisibles que se encuentran en los extremos de una cadena de texto, incluyendo espacios, tabulaciones (<code>\t</code>) y, crucialmente, el salto de línea (<code>\n</code>) que cada función <code>readlines()</code> incluye al final de cada línea leída. Sin esta limpieza, una línea como <code>"4.7110,-74.0721\n"</code> produciría un error al intentar convertir <code>"-74.0721\n"</code> a <code>float</code>, pues el carácter <code>\n</code> no es un dígito válido. Este tipo de errores son particularmente difíciles de diagnosticar porque el salto de línea es invisible al imprimir la variable en consola.</p>
+<p><code>split(",")</code> divide la cadena de texto en una lista de subcadenas utilizando la coma como delimitador, lo cual es fundamental para desempacar los campos de un archivo CSV o de texto separado por comas. Sin esta operación, la línea completa sería un solo string y no se podrían extraer los valores individuales de latitud, longitud o nombre de la entidad.</p>
+<p>En conjunto, <code>strip()</code> seguido de <code>split(",")</code> constituyen la primera línea de defensa para transformar texto crudo en datos numéricos procesables, evitando errores silenciosos que de otro modo corromperían la conversión de tipos y la construcción de DataFrames espaciales.</p>
+<hr>
+</section>
+</section>
+<section id="limpieza-de-archivos-temporales" class="level2">
+<h2 class="anchored" data-anchor-id="limpieza-de-archivos-temporales">Limpieza de archivos temporales</h2>
+<div id="2b48fcc7" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> f <span class="kw">in</span> [<span class="st">"arboles_crudos.txt"</span>, <span class="st">"arboles_limpios.csv"</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>          <span class="st">"coordenadas_colombia_p.txt"</span>, <span class="st">"coordenadas_formato_p.txt"</span>]:</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> os.path.exists(f):</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>        os.remove(f)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Archivo temporal '</span><span class="sc">{</span>f<span class="sc">}</span><span class="ss">' eliminado."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Archivo temporal 'arboles_crudos.txt' eliminado.
+Archivo temporal 'arboles_limpios.csv' eliminado.</code></pre>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

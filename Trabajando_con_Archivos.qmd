@@ -1,0 +1,290 @@
+---
+title: "Capítulo 10 – Trabajando con Archivos: Ejercicios"
+subtitle: "Programación SIG"
+author: "Lina María Quintero Fonseca"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: false
+    theme: cosmo
+    highlight-style: github
+  pdf:
+    toc: true
+    toc-depth: 3
+    documentclass: article
+    geometry: margin=2.5cm
+    highlight-style: github
+execute:
+  echo: true
+  warning: false
+---
+
+## Introducción
+
+En este documento se resuelven los dos ejercicios propuestos en el Capítulo 10 del curso de Programación SIG, enfocados en el manejo robusto de archivos, excepciones y estructuración de datos espaciales en Python.
+
+---
+
+## Ejercicio 1: Limpiando un inventario forestal (I/O y Excepciones)
+
+### Paso 1: Crear el archivo `arboles_crudos.txt`
+
+Primero, creamos programáticamente el archivo de texto con los datos crudos del inventario, incluyendo los errores intencionales en las coordenadas.
+
+```{python}
+# Datos crudos del inventario forestal (con errores intencionales)
+datos_crudos = """Especie,Latitud,Longitud
+Roble,4.6097,-74.0817
+Pino,4.6XYZ,-74.0900
+Cedro,4.6150,-74.0850
+Eucalipto,NULA,-74.0700
+Nogal,4.6200,-74.0650"""
+
+f_crudos = "arboles_crudos.txt"
+
+try:
+    with open(f_crudos, "w", encoding="utf-8") as con:
+        _ = con.write(datos_crudos)
+    print(f"Archivo '{f_crudos}' creado exitosamente.")
+except Exception as e:
+    print(f"Error al crear el archivo: {e}")
+```
+
+### Paso 2: Función `limpiar_inventario`
+
+Esta función lee el archivo crudo línea por línea, omite el encabezado, y utiliza `try-except` para intentar convertir las coordenadas a `float`. Las líneas válidas se escriben en `arboles_limpios.csv`; las inválidas se reportan en consola.
+
+```{python}
+def limpiar_inventario(f_entrada, f_salida):
+    """
+    Lee un archivo de inventario forestal con posibles errores y genera
+    un archivo limpio únicamente con los registros válidos.
+
+    Argumentos:
+        f_entrada (str): Ruta del archivo crudo de entrada.
+        f_salida  (str): Ruta del archivo limpio de salida.
+
+    Retorna:
+        tuple: (int, int) con la cantidad de registros válidos y errores.
+    """
+    validos = 0
+    errores = 0
+
+    try:
+        with open(f_entrada, "r", encoding="utf-8") as con_in, \
+             open(f_salida, "w", encoding="utf-8") as con_out:
+
+            lineas = con_in.readlines()
+
+            # Escribimos el encabezado en el archivo de salida
+            _ = con_out.write("Especie,Latitud,Longitud\n")
+
+            # Iteramos desde la línea 2 (omitimos encabezado con slicing [1:])
+            for num_linea, linea in enumerate(lineas[1:], 2):
+                linea_limpia = linea.strip()
+
+                # Omitir líneas vacías
+                if not linea_limpia:
+                    continue
+
+                try:
+                    partes = linea_limpia.split(",")
+
+                    # Verificamos que haya exactamente 3 campos
+                    if len(partes) != 3:
+                        raise ValueError(
+                            f"Se esperaban 3 campos, se encontraron {len(partes)}"
+                        )
+
+                    especie = partes[0].strip()
+                    latitud = float(partes[1].strip())   # Puede lanzar ValueError
+                    longitud = float(partes[2].strip())   # Puede lanzar ValueError
+
+                    # Si llegamos aquí, la conversión fue exitosa
+                    _ = con_out.write(f"{especie},{latitud},{longitud}\n")
+                    validos += 1
+
+                except ValueError as e:
+                    # Extraemos el nombre de la especie aunque falle la conversión
+                    especie_error = partes[0].strip() if partes else "Desconocida"
+                    print(
+                        f"  ADVERTENCIA (línea {num_linea}): "
+                        f"Especie '{especie_error}' omitida -> {e}"
+                    )
+                    errores += 1
+
+    except FileNotFoundError:
+        print(f"Error: El archivo '{f_entrada}' no fue encontrado.")
+        return (0, 0)
+    except Exception as e:
+        print(f"Error inesperado: {e}")
+        return (0, 0)
+
+    return (validos, errores)
+
+
+# --- Ejecución ---
+print("Iniciando limpieza del inventario forestal...\n")
+
+f_crudos = "arboles_crudos.txt"
+f_limpios = "arboles_limpios.csv"
+
+validos, errores = limpiar_inventario(f_crudos, f_limpios)
+
+print(f"\n--- Resumen de limpieza ---")
+print(f"Registros válidos guardados: {validos}")
+print(f"Registros con errores omitidos: {errores}")
+print(f"Archivo limpio generado: '{f_limpios}'")
+```
+
+### Verificación del archivo limpio
+
+Leemos y mostramos el contenido del archivo generado para confirmar que solo contiene registros válidos.
+
+```{python}
+print("Contenido de 'arboles_limpios.csv':\n")
+with open("arboles_limpios.csv", "r", encoding="utf-8") as f:
+    print(f.read())
+```
+
+---
+
+## Ejercicio 2: Analizando datos estructurados (Diccionarios y Listas)
+
+### Función `cargar_datos_espaciales`
+
+Esta función lee el archivo limpio, construye un diccionario por cada registro y los almacena en una lista principal.
+
+```{python}
+def cargar_datos_espaciales(nombre_archivo):
+    """
+    Lee un archivo CSV limpio de árboles y retorna una lista de diccionarios
+    con las llaves 'especie', 'latitud' y 'longitud'.
+
+    Argumentos:
+        nombre_archivo (str): Ruta del archivo CSV limpio.
+
+    Retorna:
+        list[dict]: Lista de diccionarios con la información de cada árbol.
+    """
+    arboles = []
+
+    try:
+        with open(nombre_archivo, "r", encoding="utf-8") as con:
+            lineas = con.readlines()
+
+            # Omitimos el encabezado con slicing [1:]
+            for num_linea, linea in enumerate(lineas[1:], 2):
+                linea_limpia = linea.strip()
+                if not linea_limpia:
+                    continue
+
+                try:
+                    partes = linea_limpia.split(",")
+
+                    if len(partes) == 3:
+                        arboles.append({
+                            "especie":  partes[0].strip(),
+                            "latitud":  float(partes[1].strip()),
+                            "longitud": float(partes[2].strip())
+                        })
+
+                except ValueError as e:
+                    print(f"  Advertencia (línea {num_linea}): {e}")
+                    continue
+
+    except FileNotFoundError:
+        print(f"Error: El archivo '{nombre_archivo}' no fue encontrado.")
+        return []
+    except Exception as e:
+        print(f"Error inesperado: {e}")
+        return []
+
+    return arboles
+
+
+# --- Ejecución ---
+lista_arboles = cargar_datos_espaciales("arboles_limpios.csv")
+
+print(f"Se cargaron {len(lista_arboles)} árboles válidos:\n")
+
+for arbol in lista_arboles:
+    print(
+        f"  - {arbol['especie']}: "
+        f"({arbol['latitud']:.4f}, {arbol['longitud']:.4f})"
+    )
+```
+
+### Cálculo de la latitud promedio
+
+Recorremos la lista de diccionarios para calcular programáticamente el promedio de las latitudes.
+
+```{python}
+if lista_arboles:
+    suma_latitudes = 0.0
+    for arbol in lista_arboles:
+        suma_latitudes += arbol["latitud"]
+
+    latitud_promedio = suma_latitudes / len(lista_arboles)
+
+    print(f"Latitud promedio de los {len(lista_arboles)} árboles válidos: "
+          f"{latitud_promedio:.4f}")
+else:
+    print("No se encontraron árboles válidos para calcular el promedio.")
+```
+
+---
+
+## Preguntas analíticas
+
+### Sobre el Ejercicio 1: Manejo de Excepciones
+
+**¿Por qué usar bloques `try...except` en lugar de dejar que el intérprete arroje un error por defecto?**
+
+En el procesamiento de datos espaciales reales, los archivos suelen contener miles o cientos de miles de registros, y es prácticamente inevitable que algunos presenten errores de formato: valores nulos, letras en campos numéricos, comas faltantes o campos extra. Si no se implementa manejo de excepciones, el intérprete detendrá la ejecución completa del programa al encontrar el primer error.
+
+Consideremos el escenario planteado: un archivo con 500,000 registros donde el registro 499,999 contiene un error tipográfico. Sin `try...except`, el programa procesaría exitosamente 499,998 líneas y luego colapsaría, perdiendo todo el trabajo realizado si no se guardó progresivamente, y dejando sin procesar el último registro válido (el 500,000). Todo el tiempo de cómputo invertido se desperdiciaría.
+
+Con bloques `try...except`, el programa puede capturar el error en esa línea específica, registrar una advertencia (qué línea falló y por qué) y continuar procesando las líneas restantes sin interrupción. Esta es una práctica esencial para construir herramientas de geoprocesamiento robustas y automatizadas, donde la regla es que los datos son "sucios" por naturaleza.
+
+### Sobre la Gestión de Recursos (I/O)
+
+**Comparación de cierre automático de archivos: Python vs Julia vs R**
+
+Python (`with open(...) as f:`) y Julia (`open(...) do f ... end`) implementan un patrón de manejo seguro de recursos conocido como *context manager*. La conexión al archivo se cierra automáticamente al salir del bloque, incluso si ocurre una excepción dentro de él. Esto garantiza que el recurso del sistema operativo se libere correctamente en todos los escenarios posibles.
+
+En R, el cierre del archivo requiere una llamada explícita a `close(con)`. Si el programador olvida esta llamada, o si ocurre un error antes de llegar a ella, la conexión permanece abierta. R emite advertencias al respecto cuando detecta conexiones sin cerrar, pero en un flujo de geoprocesamiento continuo donde se abren y procesan archivos de forma iterativa (por ejemplo, procesando cientos de shapefiles o capas ráster en un ciclo), las conexiones abiertas acumuladas pueden causar problemas:
+
+- **Bloqueo de archivos**: El sistema operativo puede impedir que otros procesos (o el mismo script en una segunda ejecución) accedan al archivo aún abierto.
+
+- **Consumo de recursos**: Cada conexión abierta consume un *file descriptor* del sistema operativo, y estos son finitos. Si se agotan, el programa colapsará al intentar abrir un nuevo archivo.
+
+- **Corrupción de datos**: En archivos abiertos en modo escritura, los datos pueden no escribirse completamente a disco (*flush*) si la conexión no se cierra adecuadamente.
+
+Por estas razones, siempre se debe usar `with open(...)` en Python, `open(...) do` en Julia, o garantizar el uso de `close()` dentro de un bloque `tryCatch` con argumento `finally` en R.
+
+### Sobre la Limpieza de Datos
+
+**¿Cuál es la función de `strip()` y `split()` al crear bases de datos a partir de texto plano?**
+
+`strip()` (o `trimws()` en R) elimina los caracteres de espacio en blanco invisibles que se encuentran en los extremos de una cadena de texto, incluyendo espacios, tabulaciones (`\t`) y, crucialmente, el salto de línea (`\n`) que cada función `readlines()` incluye al final de cada línea leída. Sin esta limpieza, una línea como `"4.7110,-74.0721\n"` produciría un error al intentar convertir `"-74.0721\n"` a `float`, pues el carácter `\n` no es un dígito válido. Este tipo de errores son particularmente difíciles de diagnosticar porque el salto de línea es invisible al imprimir la variable en consola.
+
+`split(",")` divide la cadena de texto en una lista de subcadenas utilizando la coma como delimitador, lo cual es fundamental para desempacar los campos de un archivo CSV o de texto separado por comas. Sin esta operación, la línea completa sería un solo string y no se podrían extraer los valores individuales de latitud, longitud o nombre de la entidad.
+
+En conjunto, `strip()` seguido de `split(",")` constituyen la primera línea de defensa para transformar texto crudo en datos numéricos procesables, evitando errores silenciosos que de otro modo corromperían la conversión de tipos y la construcción de DataFrames espaciales.
+
+---
+
+## Limpieza de archivos temporales
+
+```{python}
+import os
+
+for f in ["arboles_crudos.txt", "arboles_limpios.csv",
+          "coordenadas_colombia_p.txt", "coordenadas_formato_p.txt"]:
+    if os.path.exists(f):
+        os.remove(f)
+        print(f"Archivo temporal '{f}' eliminado.")
+```
