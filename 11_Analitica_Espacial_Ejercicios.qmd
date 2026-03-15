@@ -1,7 +1,7 @@
 ---
 title: "Capítulo 11 – Analítica Espacial: Arreglos y Tablas - Ejercicios"
-subtitle: "Programación SIG: Python, R y Julia"
-author: "Lina"
+subtitle: "Programación SIG:"
+author: "Lina María Quintero Fonseca"
 date: today
 format:
   html:
@@ -31,7 +31,7 @@ En este documento se resuelven los dos ejercicios propuestos en el Capítulo 11 
 
 ### Construcción del DataFrame base
 
-Primero construimos el DataFrame censal con las cuatro ciudades principales, tal como se hizo en la sección 11.7 del capítulo.
+Primero construimos el DataFrame censal con las cuatro ciudades principales
 
 ```{python}
 import numpy as np
@@ -55,7 +55,7 @@ print(df)
 
 La fórmula de Haversine calcula la distancia sobre la superficie de la esfera terrestre entre dos puntos dados en coordenadas geográficas. La implementamos de forma **vectorizada**, es decir, opera directamente sobre columnas completas del DataFrame sin necesidad de ciclos `for`.
 
-Se eligió este enfoque porque NumPy ejecuta las operaciones trigonométricas en bloque sobre arreglos completos usando rutinas optimizadas en C, lo cual es órdenes de magnitud más rápido que iterar fila por fila en Python puro.
+Se eligió este enfoque porque NumPy ejecuta las operaciones trigonométricas en bloque sobre arreglos completos usando rutinas optimizadas en C, lo cual es órdenes de magnitud más rápido que iterar fila por fila en Python.
 
 ```{python}
 def calcular_distancias(df, lat_ref=4.7110, lon_ref=-74.0721):

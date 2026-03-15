@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Lina">
+<meta name="author" content="Lina María Quintero Fonseca">
 <meta name="dcterms.date" content="2026-03-15">
 
 <title>Capítulo 11 – Analítica Espacial: Arreglos y Tablas - Ejercicios</title>
@@ -106,7 +106,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Capítulo 11 – Analítica Espacial: Arreglos y Tablas - Ejercicios</h1>
-<p class="subtitle lead">Programación SIG: Python, R y Julia</p>
+<p class="subtitle lead">Programación SIG:</p>
 </div>
 
 
@@ -116,7 +116,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Lina </p>
+             <p>Lina María Quintero Fonseca </p>
           </div>
   </div>
     
@@ -144,8 +144,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="ejercicio-1-vectorización-y-álgebra-espacial-haversine">Ejercicio 1: Vectorización y álgebra espacial (Haversine)</h2>
 <section id="construcción-del-dataframe-base" class="level3">
 <h3 class="anchored" data-anchor-id="construcción-del-dataframe-base">Construcción del DataFrame base</h3>
-<p>Primero construimos el DataFrame censal con las cuatro ciudades principales, tal como se hizo en la sección 11.7 del capítulo.</p>
-<div id="798c73aa" class="cell" data-execution_count="1">
+<p>Primero construimos el DataFrame censal con las cuatro ciudades principales</p>
+<div id="e30863c3" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -174,8 +174,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="función-haversine-vectorizada" class="level3">
 <h3 class="anchored" data-anchor-id="función-haversine-vectorizada">Función Haversine vectorizada</h3>
 <p>La fórmula de Haversine calcula la distancia sobre la superficie de la esfera terrestre entre dos puntos dados en coordenadas geográficas. La implementamos de forma <strong>vectorizada</strong>, es decir, opera directamente sobre columnas completas del DataFrame sin necesidad de ciclos <code>for</code>.</p>
-<p>Se eligió este enfoque porque NumPy ejecuta las operaciones trigonométricas en bloque sobre arreglos completos usando rutinas optimizadas en C, lo cual es órdenes de magnitud más rápido que iterar fila por fila en Python puro.</p>
-<div id="de81c5c5" class="cell" data-execution_count="2">
+<p>Se eligió este enfoque porque NumPy ejecuta las operaciones trigonométricas en bloque sobre arreglos completos usando rutinas optimizadas en C, lo cual es órdenes de magnitud más rápido que iterar fila por fila en Python.</p>
+<div id="487bb6bb" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calcular_distancias(df, lat_ref<span class="op">=</span><span class="fl">4.7110</span>, lon_ref<span class="op">=-</span><span class="fl">74.0721</span>):</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Calcula la distancia Haversine desde un punto de referencia (por defecto Bogotá)</span></span>
@@ -218,7 +218,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="ejecución-y-resultados" class="level3">
 <h3 class="anchored" data-anchor-id="ejecución-y-resultados">Ejecución y resultados</h3>
-<div id="5885edec" class="cell" data-execution_count="3">
+<div id="96c7006f" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df_con_distancias <span class="op">=</span> calcular_distancias(df)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"DataFrame con distancias desde Bogotá (km):</span><span class="ch">\n</span><span class="st">"</span>)</span>
@@ -237,7 +237,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="verificación-rápida" class="level3">
 <h3 class="anchored" data-anchor-id="verificación-rápida">Verificación rápida</h3>
 <p>La distancia Bogotá–Bogotá debe ser 0 km, y las distancias a las demás ciudades deben ser coherentes con la geografía colombiana (Medellín ~250 km, Cali ~300 km, Barranquilla ~700 km).</p>
-<div id="f63ccbf1" class="cell" data-execution_count="4">
+<div id="27ed9de9" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Verificación de distancias:"</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _, fila <span class="kw">in</span> df_con_distancias.iterrows():</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  Bogotá → </span><span class="sc">{</span>fila[<span class="st">'Ciudad'</span>]<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>fila[<span class="st">'Distancia_Bogota'</span>]<span class="sc">}</span><span class="ss"> km"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -258,7 +258,7 @@ Verificación de distancias:
 <section id="paso-1-creación-del-dataframe-con-datos-nulos" class="level3">
 <h3 class="anchored" data-anchor-id="paso-1-creación-del-dataframe-con-datos-nulos">Paso 1: Creación del DataFrame con datos nulos</h3>
 <p>Creamos el DataFrame de estaciones meteorológicas tal como lo indica el enunciado. Usamos <code>np.nan</code> como representación del valor nulo en Python/Pandas, ya que es el estándar para datos faltantes en columnas numéricas de tipo <code>float</code>.</p>
-<div id="db32904b" class="cell" data-execution_count="5">
+<div id="bfd10cbe" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Creación del DataFrame con datos nulos (sensores fallidos en Costa y Sabana)</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>df_estaciones <span class="op">=</span> pd.DataFrame({</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Estacion"</span>:      [<span class="st">"Páramo"</span>, <span class="st">"Valle"</span>, <span class="st">"Costa"</span>, <span class="st">"Selva"</span>, <span class="st">"Sabana"</span>],</span>
@@ -291,7 +291,7 @@ dtype: int64</code></pre>
 <h3 class="anchored" data-anchor-id="paso-2-imputación-de-valores-nulos">Paso 2: Imputación de valores nulos</h3>
 <p>Los sensores de la Costa y la Sabana fallaron. Rellenamos los valores nulos con la <strong>media</strong> de las estaciones que sí tienen datos válidos.</p>
 <p>Se eligió <code>fillna()</code> con la media porque es la técnica de imputación más simple y adecuada cuando no se dispone de información auxiliar (como una serie temporal o estaciones vecinas). Pandas calcula la media automáticamente ignorando los <code>NaN</code> por defecto en <code>.mean()</code>.</p>
-<div id="75f1d701" class="cell" data-execution_count="6">
+<div id="0e2e5f98" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcular la media de precipitación ignorando nulos</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>media_precipitacion <span class="op">=</span> df_estaciones[<span class="st">"Precipitacion"</span>].mean()</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Media de precipitación (estaciones válidas): </span><span class="sc">{</span>media_precipitacion<span class="sc">:.2f}</span><span class="ss"> mm</span><span class="ch">\n</span><span class="ss">"</span>)</span>
@@ -318,7 +318,7 @@ DataFrame después de imputación:
 <section id="paso-3-filtro-espacial-estaciones-altas" class="level3">
 <h3 class="anchored" data-anchor-id="paso-3-filtro-espacial-estaciones-altas">Paso 3: Filtro espacial (estaciones altas)</h3>
 <p>Extraemos en un nuevo DataFrame solo las estaciones cuya elevación sea estrictamente mayor a 1000 metros. Usamos <strong>indexación booleana</strong> directamente sobre la columna <code>Elevacion</code>, lo cual es más eficiente y legible que un ciclo <code>for</code> con condicionales.</p>
-<div id="95d367cd" class="cell" data-execution_count="7">
+<div id="be384e17" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filtro booleano: elevación &gt; 1000 m</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>estaciones_altas <span class="op">=</span> df_estaciones[df_estaciones[<span class="st">"Elevacion"</span>] <span class="op">&gt;</span> <span class="dv">1000</span>].copy()</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -336,7 +336,7 @@ DataFrame después de imputación:
 </section>
 <section id="paso-4-cálculo-final-precipitación-promedio-en-estaciones-altas" class="level3">
 <h3 class="anchored" data-anchor-id="paso-4-cálculo-final-precipitación-promedio-en-estaciones-altas">Paso 4: Cálculo final – Precipitación promedio en estaciones altas</h3>
-<div id="063a2b36" class="cell" data-execution_count="8">
+<div id="c9f3c1a7" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>precipitacion_promedio_altas <span class="op">=</span> estaciones_altas[<span class="st">"Precipitacion"</span>].mean()</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Precipitación promedio anual en estaciones altas: "</span></span>
@@ -350,7 +350,7 @@ Precipitación promedio anual en estaciones altas: 1244.72 mm</code></pre>
 <section id="visualización-complementaria" class="level3">
 <h3 class="anchored" data-anchor-id="visualización-complementaria">Visualización complementaria</h3>
 <p>Generamos un gráfico de barras para comparar visualmente la precipitación entre todas las estaciones, destacando cuáles fueron imputadas.</p>
-<div id="8134ec5e" class="cell" data-execution_count="9">
+<div id="936c7a38" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">4</span>))</span>
