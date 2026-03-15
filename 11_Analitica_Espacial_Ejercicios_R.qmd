@@ -1,0 +1,110 @@
+---
+title: "Capítulo 11 - Analítica Espacial: Ejercicios (R)"
+subtitle: "Programación SIG"
+author: "Lina María Quintero Fonseca"
+date: today
+format:
+  html:
+    toc: true
+    theme: cosmo
+  pdf:
+    toc: true
+    geometry: margin=2.5cm
+execute:
+  echo: true
+  warning: false
+---
+
+## Ejercicio 1: Haversine vectorizada
+
+### DataFrame base
+
+```{r}
+df <- data.frame(
+  Ciudad    = c("Bogotá", "Medellín", "Cali", "Barranquilla"),
+  Region    = c("Andina", "Andina", "Pacífica", "Caribe"),
+  Poblacion = c(7181469, 2529403, 2227642, 1206319),
+  Latitud   = c(4.7110, 6.2442, 3.4516, 10.9685),
+  Longitud  = c(-74.0721, -75.5812, -76.5320, -74.7813),
+  Elevacion = c(2640, 1495, 1018, 18)
+)
+print(df)
+```
+
+### Función Haversine
+
+```{r}
+calcular_distancias <- function(df, lat_ref = 4.7110, lon_ref = -74.0721) {
+  R <- 6371.0
+  lat1 <- lat_ref * pi / 180
+  lon1 <- lon_ref * pi / 180
+  lat2 <- df\ * pi / 180
+  lon2 <- df\ * pi / 180
+  dlat <- lat2 - lat1
+  dlon <- lon2 - lon1
+  a <- sin(dlat / 2)^2 + cos(lat1) * cos(lat2) * sin(dlon / 2)^2
+  c_dist <- 2 * atan2(sqrt(a), sqrt(1 - a))
+  df\ <- round(R * c_dist, 2)
+  return(df)
+}
+
+df_dist <- calcular_distancias(df)
+print(df_dist[, c("Ciudad", "Distancia_Bogota")])
+```
+
+## Ejercicio 2: Limpieza y agregación tabular
+
+### Paso 1: DataFrame con nulos
+
+```{r}
+df_est <- data.frame(
+  Estacion      = c("Páramo", "Valle", "Costa", "Selva", "Sabana"),
+  Elevacion     = c(3200, 1500, 15, 200, 2600),
+  Precipitacion = c(850.5, 1200.0, NA, 3000.5, NA)
+)
+print(df_est)
+```
+
+### Paso 2: Imputación
+
+```{r}
+library(dplyr)
+media_p <- mean(df_est\, na.rm = TRUE)
+cat(sprintf("Media válida: %.2f mm
+", media_p))
+
+df_est <- df_est %>%
+  mutate(Precipitacion = ifelse(is.na(Precipitacion), media_p, Precipitacion))
+print(df_est)
+```
+
+### Paso 3: Filtro estaciones altas
+
+```{r}
+est_altas <- df_est %>% filter(Elevacion > 1000)
+print(est_altas)
+```
+
+### Paso 4: Promedio estaciones altas
+
+```{r}
+prom <- mean(est_altas\)
+cat(sprintf("Precipitación promedio estaciones altas: %.2f mm
+", prom))
+```
+
+### Visualización
+
+```{r}
+colores <- ifelse(df_est\ > 1000, "#2ecc71", "#95a5a6")
+bp <- barplot(df_est\, names.arg = df_est\,
+  col = colores, main = "Precipitación por Estación (R)", ylab = "mm",
+  ylim = c(0, max(df_est\) * 1.15))
+abline(h = prom, col = "red", lty = 2)
+legend("topright", sprintf("Prom altas: %.0f mm", prom),
+  col = "red", lty = 2, cex = 0.8)
+```
+
+## Comentarios
+
+En R se usa na.rm = TRUE en mean() porque sin este argumento retorna NA si hay nulos. Se eligió dplyr filter por legibilidad con pipes. Las funciones trigonométricas en R son vectorizadas nativamente. La imputación con media es la técnica más simple; en SIG real se usaría interpolación espacial.

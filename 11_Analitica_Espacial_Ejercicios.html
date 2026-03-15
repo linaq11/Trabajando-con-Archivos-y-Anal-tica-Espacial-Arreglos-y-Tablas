@@ -6,10 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Lina María Quintero Fonseca">
+<meta name="author" content="Lina Maía Quintero Fonseca">
 <meta name="dcterms.date" content="2026-03-15">
 
-<title>Capítulo 11 – Analítica Espacial: Arreglos y Tablas - Ejercicios</title>
+<title>Capítulo 11 – Analítica Espacial: Arreglos y Tablas - Ejercicios (R)</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -105,8 +105,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Capítulo 11 – Analítica Espacial: Arreglos y Tablas - Ejercicios</h1>
-<p class="subtitle lead">Programación SIG:</p>
+<h1 class="title">Capítulo 11 – Analítica Espacial: Arreglos y Tablas - Ejercicios (R)</h1>
+<p class="subtitle lead">Programación SIG</p>
 </div>
 
 
@@ -116,7 +116,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Lina María Quintero Fonseca </p>
+             <p>Lina Maía Quintero Fonseca </p>
           </div>
   </div>
     
@@ -137,114 +137,115 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="introducción" class="level2">
 <h2 class="anchored" data-anchor-id="introducción">Introducción</h2>
-<p>En este documento se resuelven los dos ejercicios propuestos en el Capítulo 11 del curso de Programación SIG, enfocados en operaciones vectorizadas con NumPy, manipulación tabular con Pandas, imputación de datos nulos y filtrado espacial.</p>
+<p>En este documento se resuelven los dos ejercicios propuestos en el Capítulo 11 del curso de Programación SIG, implementados en <strong>R</strong> utilizando operaciones vectorizadas nativas y el paquete <code>dplyr</code> para manipulación tabular.</p>
 <hr>
 </section>
 <section id="ejercicio-1-vectorización-y-álgebra-espacial-haversine" class="level2">
 <h2 class="anchored" data-anchor-id="ejercicio-1-vectorización-y-álgebra-espacial-haversine">Ejercicio 1: Vectorización y álgebra espacial (Haversine)</h2>
 <section id="construcción-del-dataframe-base" class="level3">
 <h3 class="anchored" data-anchor-id="construcción-del-dataframe-base">Construcción del DataFrame base</h3>
-<p>Primero construimos el DataFrame censal con las cuatro ciudades principales</p>
-<div id="e30863c3" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># DataFrame censal base (sección 11.7)</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame({</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Ciudad"</span>:    [<span class="st">"Bogotá"</span>, <span class="st">"Medellín"</span>, <span class="st">"Cali"</span>, <span class="st">"Barranquilla"</span>],</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Region"</span>:    [<span class="st">"Andina"</span>, <span class="st">"Andina"</span>, <span class="st">"Pacífica"</span>, <span class="st">"Caribe"</span>],</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Poblacion"</span>: [<span class="dv">7181469</span>, <span class="dv">2529403</span>, <span class="dv">2227642</span>, <span class="dv">1206319</span>],</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Latitud"</span>:   [<span class="fl">4.7110</span>, <span class="fl">6.2442</span>, <span class="fl">3.4516</span>, <span class="fl">10.9685</span>],</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Longitud"</span>:  [<span class="op">-</span><span class="fl">74.0721</span>, <span class="op">-</span><span class="fl">75.5812</span>, <span class="op">-</span><span class="fl">76.5320</span>, <span class="op">-</span><span class="fl">74.7813</span>],</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Elevacion"</span>: [<span class="dv">2640</span>, <span class="dv">1495</span>, <span class="dv">1018</span>, <span class="dv">18</span>]</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"DataFrame base:"</span>)</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Construimos el DataFrame censal con las cuatro ciudades principales, tal como se hizo en la sección 11.7 del capítulo.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># DataFrame censal base (sección 11.7)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Ciudad    =</span> <span class="fu">c</span>(<span class="st">"Bogotá"</span>, <span class="st">"Medellín"</span>, <span class="st">"Cali"</span>, <span class="st">"Barranquilla"</span>),</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Region    =</span> <span class="fu">c</span>(<span class="st">"Andina"</span>, <span class="st">"Andina"</span>, <span class="st">"Pacífica"</span>, <span class="st">"Caribe"</span>),</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Poblacion =</span> <span class="fu">c</span>(<span class="dv">7181469</span>, <span class="dv">2529403</span>, <span class="dv">2227642</span>, <span class="dv">1206319</span>),</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">Latitud   =</span> <span class="fu">c</span>(<span class="fl">4.7110</span>, <span class="fl">6.2442</span>, <span class="fl">3.4516</span>, <span class="fl">10.9685</span>),</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Longitud  =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">74.0721</span>, <span class="sc">-</span><span class="fl">75.5812</span>, <span class="sc">-</span><span class="fl">76.5320</span>, <span class="sc">-</span><span class="fl">74.7813</span>),</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Elevacion =</span> <span class="fu">c</span>(<span class="dv">2640</span>, <span class="dv">1495</span>, <span class="dv">1018</span>, <span class="dv">18</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"DataFrame base:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>DataFrame base:
-         Ciudad    Region  Poblacion  Latitud  Longitud  Elevacion
-0        Bogotá    Andina    7181469   4.7110  -74.0721       2640
-1      Medellín    Andina    2529403   6.2442  -75.5812       1495
-2          Cali  Pacífica    2227642   3.4516  -76.5320       1018
-3  Barranquilla    Caribe    1206319  10.9685  -74.7813         18</code></pre>
+<pre><code>DataFrame base:</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        Ciudad   Region Poblacion Latitud Longitud Elevacion
+1       Bogotá   Andina   7181469  4.7110 -74.0721      2640
+2     Medellín   Andina   2529403  6.2442 -75.5812      1495
+3         Cali Pacífica   2227642  3.4516 -76.5320      1018
+4 Barranquilla   Caribe   1206319 10.9685 -74.7813        18</code></pre>
 </div>
 </div>
 </section>
 <section id="función-haversine-vectorizada" class="level3">
 <h3 class="anchored" data-anchor-id="función-haversine-vectorizada">Función Haversine vectorizada</h3>
-<p>La fórmula de Haversine calcula la distancia sobre la superficie de la esfera terrestre entre dos puntos dados en coordenadas geográficas. La implementamos de forma <strong>vectorizada</strong>, es decir, opera directamente sobre columnas completas del DataFrame sin necesidad de ciclos <code>for</code>.</p>
-<p>Se eligió este enfoque porque NumPy ejecuta las operaciones trigonométricas en bloque sobre arreglos completos usando rutinas optimizadas en C, lo cual es órdenes de magnitud más rápido que iterar fila por fila en Python.</p>
-<div id="487bb6bb" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calcular_distancias(df, lat_ref<span class="op">=</span><span class="fl">4.7110</span>, lon_ref<span class="op">=-</span><span class="fl">74.0721</span>):</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Calcula la distancia Haversine desde un punto de referencia (por defecto Bogotá)</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">    hacia todas las filas del DataFrame, de forma vectorizada.</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">    Argumentos:</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">        df (pd.DataFrame): DataFrame con columnas 'Latitud' y 'Longitud'.</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">        lat_ref (float): Latitud del punto de referencia en grados decimales.</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">        lon_ref (float): Longitud del punto de referencia en grados decimales.</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">    Retorna:</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">        pd.DataFrame: DataFrame original con la nueva columna 'Distancia_Bogota' (km).</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Radio medio de la Tierra en kilómetros</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    R <span class="op">=</span> <span class="fl">6371.0</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Convertir grados a radianes de forma vectorizada (columnas completas)</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    lat1 <span class="op">=</span> np.radians(lat_ref)</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    lon1 <span class="op">=</span> np.radians(lon_ref)</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    lat2 <span class="op">=</span> np.radians(df[<span class="st">"Latitud"</span>].values)</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    lon2 <span class="op">=</span> np.radians(df[<span class="st">"Longitud"</span>].values)</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Diferencias vectorizadas</span></span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    dlat <span class="op">=</span> lat2 <span class="op">-</span> lat1</span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    dlon <span class="op">=</span> lon2 <span class="op">-</span> lon1</span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Fórmula de Haversine aplicada element-wise sobre los arreglos</span></span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> np.sin(dlat <span class="op">/</span> <span class="dv">2</span>)<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> np.cos(lat1) <span class="op">*</span> np.cos(lat2) <span class="op">*</span> np.sin(dlon <span class="op">/</span> <span class="dv">2</span>)<span class="op">**</span><span class="dv">2</span></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    c <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> np.arctan2(np.sqrt(a), np.sqrt(<span class="dv">1</span> <span class="op">-</span> a))</span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Distancia en kilómetros</span></span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    distancia_km <span class="op">=</span> R <span class="op">*</span> c</span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Agregar la nueva columna al DataFrame</span></span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    df_resultado <span class="op">=</span> df.copy()</span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    df_resultado[<span class="st">"Distancia_Bogota"</span>] <span class="op">=</span> np.<span class="bu">round</span>(distancia_km, <span class="dv">2</span>)</span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df_resultado</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>En R, las funciones trigonométricas (<code>sin()</code>, <code>cos()</code>, <code>atan2()</code>, <code>sqrt()</code>) son <strong>vectorizadas por defecto</strong>: al recibir un vector, operan sobre todos sus elementos simultáneamente sin necesidad de ciclos <code>for</code>. Esto permite aplicar la fórmula de Haversine directamente sobre las columnas completas del DataFrame.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>calcular_distancias <span class="ot">&lt;-</span> <span class="cf">function</span>(df, <span class="at">lat_ref =</span> <span class="fl">4.7110</span>, <span class="at">lon_ref =</span> <span class="sc">-</span><span class="fl">74.0721</span>) {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#' Calcula la distancia Haversine desde un punto de referencia (Bogotá)</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">#' hacia todas las filas del DataFrame, de forma vectorizada.</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">#'</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#' @param df data.frame con columnas 'Latitud' y 'Longitud'</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">#' @param lat_ref Latitud del punto de referencia (grados decimales)</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">#' @param lon_ref Longitud del punto de referencia (grados decimales)</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">#' @return data.frame con columna adicional 'Distancia_Bogota' (km)</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Radio medio de la Tierra en kilómetros</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  R <span class="ot">&lt;-</span> <span class="fl">6371.0</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Convertir grados a radianes (operación vectorizada sobre columnas completas)</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  lat1 <span class="ot">&lt;-</span> lat_ref <span class="sc">*</span> pi <span class="sc">/</span> <span class="dv">180</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  lon1 <span class="ot">&lt;-</span> lon_ref <span class="sc">*</span> pi <span class="sc">/</span> <span class="dv">180</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  lat2 <span class="ot">&lt;-</span> df<span class="sc">$</span>Latitud <span class="sc">*</span> pi <span class="sc">/</span> <span class="dv">180</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  lon2 <span class="ot">&lt;-</span> df<span class="sc">$</span>Longitud <span class="sc">*</span> pi <span class="sc">/</span> <span class="dv">180</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Diferencias vectorizadas</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  dlat <span class="ot">&lt;-</span> lat2 <span class="sc">-</span> lat1</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  dlon <span class="ot">&lt;-</span> lon2 <span class="sc">-</span> lon1</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Fórmula de Haversine aplicada element-wise sobre los vectores</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  a <span class="ot">&lt;-</span> <span class="fu">sin</span>(dlat <span class="sc">/</span> <span class="dv">2</span>)<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> <span class="fu">cos</span>(lat1) <span class="sc">*</span> <span class="fu">cos</span>(lat2) <span class="sc">*</span> <span class="fu">sin</span>(dlon <span class="sc">/</span> <span class="dv">2</span>)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  c_dist <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">atan2</span>(<span class="fu">sqrt</span>(a), <span class="fu">sqrt</span>(<span class="dv">1</span> <span class="sc">-</span> a))</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Distancia en kilómetros</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>  distancia_km <span class="ot">&lt;-</span> R <span class="sc">*</span> c_dist</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Agregar la nueva columna al DataFrame</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>  df<span class="sc">$</span>Distancia_Bogota <span class="ot">&lt;-</span> <span class="fu">round</span>(distancia_km, <span class="dv">2</span>)</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(df)</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="ejecución-y-resultados" class="level3">
 <h3 class="anchored" data-anchor-id="ejecución-y-resultados">Ejecución y resultados</h3>
-<div id="96c7006f" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df_con_distancias <span class="op">=</span> calcular_distancias(df)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"DataFrame con distancias desde Bogotá (km):</span><span class="ch">\n</span><span class="st">"</span>)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_con_distancias[[<span class="st">"Ciudad"</span>, <span class="st">"Latitud"</span>, <span class="st">"Longitud"</span>, <span class="st">"Distancia_Bogota"</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>df_con_distancias <span class="ot">&lt;-</span> <span class="fu">calcular_distancias</span>(df)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"DataFrame con distancias desde Bogotá (km):</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>DataFrame con distancias desde Bogotá (km):
-
-         Ciudad  Latitud  Longitud  Distancia_Bogota
-0        Bogotá   4.7110  -74.0721              0.00
-1      Medellín   6.2442  -75.5812            238.67
-2          Cali   3.4516  -76.5320            306.67
-3  Barranquilla  10.9685  -74.7813            700.17</code></pre>
+<pre><code>DataFrame con distancias desde Bogotá (km):</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(df_con_distancias[, <span class="fu">c</span>(<span class="st">"Ciudad"</span>, <span class="st">"Latitud"</span>, <span class="st">"Longitud"</span>, <span class="st">"Distancia_Bogota"</span>)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        Ciudad Latitud Longitud Distancia_Bogota
+1       Bogotá  4.7110 -74.0721             0.00
+2     Medellín  6.2442 -75.5812           238.67
+3         Cali  3.4516 -76.5320           306.67
+4 Barranquilla 10.9685 -74.7813           700.17</code></pre>
 </div>
 </div>
 </section>
 <section id="verificación-rápida" class="level3">
 <h3 class="anchored" data-anchor-id="verificación-rápida">Verificación rápida</h3>
-<p>La distancia Bogotá–Bogotá debe ser 0 km, y las distancias a las demás ciudades deben ser coherentes con la geografía colombiana (Medellín ~250 km, Cali ~300 km, Barranquilla ~700 km).</p>
-<div id="27ed9de9" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Verificación de distancias:"</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _, fila <span class="kw">in</span> df_con_distancias.iterrows():</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  Bogotá → </span><span class="sc">{</span>fila[<span class="st">'Ciudad'</span>]<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>fila[<span class="st">'Distancia_Bogota'</span>]<span class="sc">}</span><span class="ss"> km"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>La distancia Bogotá–Bogotá debe ser 0 km, y las distancias a las demás ciudades deben ser coherentes con la geografía colombiana.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Verificación de distancias:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
-Verificación de distancias:
-  Bogotá → Bogotá: 0.0 km
+Verificación de distancias:</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(df_con_distancias))) {</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  Bogotá → %s: %.2f km</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>              df_con_distancias<span class="sc">$</span>Ciudad[i],</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>              df_con_distancias<span class="sc">$</span>Distancia_Bogota[i]))</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Bogotá → Bogotá: 0.00 km
   Bogotá → Medellín: 238.67 km
   Bogotá → Cali: 306.67 km
   Bogotá → Barranquilla: 700.17 km</code></pre>
@@ -257,90 +258,95 @@ Verificación de distancias:
 <h2 class="anchored" data-anchor-id="ejercicio-2-limpieza-filtros-y-agregación-tabular">Ejercicio 2: Limpieza, filtros y agregación tabular</h2>
 <section id="paso-1-creación-del-dataframe-con-datos-nulos" class="level3">
 <h3 class="anchored" data-anchor-id="paso-1-creación-del-dataframe-con-datos-nulos">Paso 1: Creación del DataFrame con datos nulos</h3>
-<p>Creamos el DataFrame de estaciones meteorológicas tal como lo indica el enunciado. Usamos <code>np.nan</code> como representación del valor nulo en Python/Pandas, ya que es el estándar para datos faltantes en columnas numéricas de tipo <code>float</code>.</p>
-<div id="bfd10cbe" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Creación del DataFrame con datos nulos (sensores fallidos en Costa y Sabana)</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>df_estaciones <span class="op">=</span> pd.DataFrame({</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Estacion"</span>:      [<span class="st">"Páramo"</span>, <span class="st">"Valle"</span>, <span class="st">"Costa"</span>, <span class="st">"Selva"</span>, <span class="st">"Sabana"</span>],</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Elevacion"</span>:     [<span class="dv">3200</span>, <span class="dv">1500</span>, <span class="dv">15</span>, <span class="dv">200</span>, <span class="dv">2600</span>],</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Precipitacion"</span>: [<span class="fl">850.5</span>, <span class="fl">1200.0</span>, np.nan, <span class="fl">3000.5</span>, np.nan]</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"DataFrame original (con datos nulos):</span><span class="ch">\n</span><span class="st">"</span>)</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_estaciones)</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Valores nulos por columna:</span><span class="ch">\n</span><span class="sc">{</span>df_estaciones<span class="sc">.</span>isna()<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Creamos el DataFrame de estaciones meteorológicas. En R, el valor nulo estándar para datos faltantes es <code>NA</code> (<em>Not Available</em>), que es el equivalente a <code>np.nan</code> en Python o <code>missing</code> en Julia.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Creación del DataFrame con datos nulos (sensores fallidos en Costa y Sabana)</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>df_estaciones <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Estacion      =</span> <span class="fu">c</span>(<span class="st">"Páramo"</span>, <span class="st">"Valle"</span>, <span class="st">"Costa"</span>, <span class="st">"Selva"</span>, <span class="st">"Sabana"</span>),</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Elevacion     =</span> <span class="fu">c</span>(<span class="dv">3200</span>, <span class="dv">1500</span>, <span class="dv">15</span>, <span class="dv">200</span>, <span class="dv">2600</span>),</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Precipitacion =</span> <span class="fu">c</span>(<span class="fl">850.5</span>, <span class="fl">1200.0</span>, <span class="cn">NA</span>, <span class="fl">3000.5</span>, <span class="cn">NA</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"DataFrame original (con datos nulos):</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>DataFrame original (con datos nulos):
-
-  Estacion  Elevacion  Precipitacion
-0   Páramo       3200          850.5
-1    Valle       1500         1200.0
-2    Costa         15            NaN
-3    Selva        200         3000.5
-4   Sabana       2600            NaN
-
-Valores nulos por columna:
-Estacion         0
-Elevacion        0
-Precipitacion    2
-dtype: int64</code></pre>
+<pre><code>DataFrame original (con datos nulos):</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(df_estaciones)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Estacion Elevacion Precipitacion
+1   Páramo      3200         850.5
+2    Valle      1500        1200.0
+3    Costa        15            NA
+4    Selva       200        3000.5
+5   Sabana      2600            NA</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Valores nulos en Precipitacion: %d</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">sum</span>(<span class="fu">is.na</span>(df_estaciones<span class="sc">$</span>Precipitacion))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Valores nulos en Precipitacion: 2</code></pre>
 </div>
 </div>
 </section>
 <section id="paso-2-imputación-de-valores-nulos" class="level3">
 <h3 class="anchored" data-anchor-id="paso-2-imputación-de-valores-nulos">Paso 2: Imputación de valores nulos</h3>
 <p>Los sensores de la Costa y la Sabana fallaron. Rellenamos los valores nulos con la <strong>media</strong> de las estaciones que sí tienen datos válidos.</p>
-<p>Se eligió <code>fillna()</code> con la media porque es la técnica de imputación más simple y adecuada cuando no se dispone de información auxiliar (como una serie temporal o estaciones vecinas). Pandas calcula la media automáticamente ignorando los <code>NaN</code> por defecto en <code>.mean()</code>.</p>
-<div id="0e2e5f98" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcular la media de precipitación ignorando nulos</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>media_precipitacion <span class="op">=</span> df_estaciones[<span class="st">"Precipitacion"</span>].mean()</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Media de precipitación (estaciones válidas): </span><span class="sc">{</span>media_precipitacion<span class="sc">:.2f}</span><span class="ss"> mm</span><span class="ch">\n</span><span class="ss">"</span>)</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Imputar los valores nulos con la media calculada</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>df_estaciones[<span class="st">"Precipitacion"</span>] <span class="op">=</span> df_estaciones[<span class="st">"Precipitacion"</span>].fillna(media_precipitacion)</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"DataFrame después de imputación:</span><span class="ch">\n</span><span class="st">"</span>)</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_estaciones)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Se usa <code>na.rm = TRUE</code> en <code>mean()</code> para que R ignore los <code>NA</code> al calcular el promedio. Luego, <code>ifelse(is.na(...))</code> reemplaza únicamente los valores faltantes, sin alterar los datos válidos existentes.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcular la media de precipitación ignorando NAs</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>media_precipitacion <span class="ot">&lt;-</span> <span class="fu">mean</span>(df_estaciones<span class="sc">$</span>Precipitacion, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Media de precipitación (estaciones válidas): %.2f mm</span><span class="sc">\n\n</span><span class="st">"</span>, media_precipitacion))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Media de precipitación (estaciones válidas): 1683.67 mm
-
-DataFrame después de imputación:
-
-  Estacion  Elevacion  Precipitacion
-0   Páramo       3200     850.500000
-1    Valle       1500    1200.000000
-2    Costa         15    1683.666667
-3    Selva        200    3000.500000
-4   Sabana       2600    1683.666667</code></pre>
+<pre><code>Media de precipitación (estaciones válidas): 1683.67 mm</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Imputar los valores nulos con la media calculada</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>df_estaciones <span class="ot">&lt;-</span> df_estaciones <span class="sc">%&gt;%</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Precipitacion =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(Precipitacion), media_precipitacion, Precipitacion))</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"DataFrame después de imputación:</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>DataFrame después de imputación:</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(df_estaciones)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Estacion Elevacion Precipitacion
+1   Páramo      3200       850.500
+2    Valle      1500      1200.000
+3    Costa        15      1683.667
+4    Selva       200      3000.500
+5   Sabana      2600      1683.667</code></pre>
 </div>
 </div>
 </section>
 <section id="paso-3-filtro-espacial-estaciones-altas" class="level3">
 <h3 class="anchored" data-anchor-id="paso-3-filtro-espacial-estaciones-altas">Paso 3: Filtro espacial (estaciones altas)</h3>
-<p>Extraemos en un nuevo DataFrame solo las estaciones cuya elevación sea estrictamente mayor a 1000 metros. Usamos <strong>indexación booleana</strong> directamente sobre la columna <code>Elevacion</code>, lo cual es más eficiente y legible que un ciclo <code>for</code> con condicionales.</p>
-<div id="be384e17" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filtro booleano: elevación &gt; 1000 m</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>estaciones_altas <span class="op">=</span> df_estaciones[df_estaciones[<span class="st">"Elevacion"</span>] <span class="op">&gt;</span> <span class="dv">1000</span>].copy()</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Estaciones altas (Elevación &gt; 1000 m):</span><span class="ch">\n</span><span class="st">"</span>)</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(estaciones_altas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Extraemos un nuevo DataFrame con solo las estaciones cuya elevación sea estrictamente mayor a 1000 metros. Usamos <code>filter()</code> de <code>dplyr</code>, que internamente aplica indexación booleana vectorizada, más legible que un <code>for</code> con condicionales.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filtro: elevación &gt; 1000 m</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>estaciones_altas <span class="ot">&lt;-</span> df_estaciones <span class="sc">%&gt;%</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Elevacion <span class="sc">&gt;</span> <span class="dv">1000</span>)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Estaciones altas (Elevación &gt; 1000 m):</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Estaciones altas (Elevación &gt; 1000 m):
-
-  Estacion  Elevacion  Precipitacion
-0   Páramo       3200     850.500000
-1    Valle       1500    1200.000000
-4   Sabana       2600    1683.666667</code></pre>
+<pre><code>Estaciones altas (Elevación &gt; 1000 m):</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(estaciones_altas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Estacion Elevacion Precipitacion
+1   Páramo      3200       850.500
+2    Valle      1500      1200.000
+3   Sabana      2600      1683.667</code></pre>
 </div>
 </div>
 </section>
 <section id="paso-4-cálculo-final-precipitación-promedio-en-estaciones-altas" class="level3">
 <h3 class="anchored" data-anchor-id="paso-4-cálculo-final-precipitación-promedio-en-estaciones-altas">Paso 4: Cálculo final – Precipitación promedio en estaciones altas</h3>
-<div id="c9f3c1a7" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>precipitacion_promedio_altas <span class="op">=</span> estaciones_altas[<span class="st">"Precipitacion"</span>].mean()</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Precipitación promedio anual en estaciones altas: "</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"</span><span class="sc">{</span>precipitacion_promedio_altas<span class="sc">:.2f}</span><span class="ss"> mm"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>precipitacion_promedio_altas <span class="ot">&lt;-</span> <span class="fu">mean</span>(estaciones_altas<span class="sc">$</span>Precipitacion)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Precipitación promedio anual en estaciones altas: %.2f mm</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>            precipitacion_promedio_altas))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Precipitación promedio anual en estaciones altas: 1244.72 mm</code></pre>
@@ -349,34 +355,35 @@ Precipitación promedio anual en estaciones altas: 1244.72 mm</code></pre>
 </section>
 <section id="visualización-complementaria" class="level3">
 <h3 class="anchored" data-anchor-id="visualización-complementaria">Visualización complementaria</h3>
-<p>Generamos un gráfico de barras para comparar visualmente la precipitación entre todas las estaciones, destacando cuáles fueron imputadas.</p>
-<div id="936c7a38" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">4</span>))</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>colores <span class="op">=</span> [<span class="st">"#2ecc71"</span> <span class="cf">if</span> elev <span class="op">&gt;</span> <span class="dv">1000</span> <span class="cf">else</span> <span class="st">"#95a5a6"</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>           <span class="cf">for</span> elev <span class="kw">in</span> df_estaciones[<span class="st">"Elevacion"</span>]]</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>ax.bar(df_estaciones[<span class="st">"Estacion"</span>], df_estaciones[<span class="st">"Precipitacion"</span>], color<span class="op">=</span>colores)</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Precipitación Anual (mm)"</span>)</span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Precipitación por Estación Meteorológica"</span>)</span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>ax.axhline(y<span class="op">=</span>precipitacion_promedio_altas, color<span class="op">=</span><span class="st">"red"</span>, linestyle<span class="op">=</span><span class="st">"--"</span>,</span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>           label<span class="op">=</span><span class="ss">f"Promedio estaciones altas: </span><span class="sc">{</span>precipitacion_promedio_altas<span class="sc">:.0f}</span><span class="ss"> mm"</span>)</span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Anotar estaciones imputadas</span></span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, est <span class="kw">in</span> <span class="bu">enumerate</span>(df_estaciones[<span class="st">"Estacion"</span>]):</span>
-<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> est <span class="kw">in</span> [<span class="st">"Costa"</span>, <span class="st">"Sabana"</span>]:</span>
-<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>        ax.annotate(<span class="st">"(imputado)"</span>, (i, df_estaciones[<span class="st">"Precipitacion"</span>].iloc[i] <span class="op">+</span> <span class="dv">50</span>),</span>
-<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>                    ha<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="dv">8</span>, color<span class="op">=</span><span class="st">"gray"</span>)</span>
-<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
+<p>Generamos un gráfico de barras con <code>barplot()</code> de R base para comparar la precipitación entre estaciones.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Colores: verde para estaciones altas, gris para las demás</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>colores <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(df_estaciones<span class="sc">$</span>Elevacion <span class="sc">&gt;</span> <span class="dv">1000</span>, <span class="st">"#2ecc71"</span>, <span class="st">"#95a5a6"</span>)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>barras <span class="ot">&lt;-</span> <span class="fu">barplot</span>(</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  df_estaciones<span class="sc">$</span>Precipitacion,</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">names.arg =</span> df_estaciones<span class="sc">$</span>Estacion,</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">col       =</span> colores,</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">main      =</span> <span class="st">"Precipitación por Estación Meteorológica (R)"</span>,</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab      =</span> <span class="st">"Precipitación Anual (mm)"</span>,</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylim      =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fu">max</span>(df_estaciones<span class="sc">$</span>Precipitacion) <span class="sc">*</span> <span class="fl">1.15</span>)</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Línea de referencia: promedio estaciones altas</span></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> precipitacion_promedio_altas, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">lwd =</span> <span class="fl">1.5</span>)</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topright"</span>,</span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">legend =</span> <span class="fu">sprintf</span>(<span class="st">"Promedio altas: %.0f mm"</span>, precipitacion_promedio_altas),</span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">lwd =</span> <span class="fl">1.5</span>, <span class="at">cex =</span> <span class="fl">0.8</span>)</span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Anotar estaciones imputadas</span></span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a>idx_imputadas <span class="ot">&lt;-</span> <span class="fu">which</span>(df_estaciones<span class="sc">$</span>Estacion <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Costa"</span>, <span class="st">"Sabana"</span>))</span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="at">x =</span> barras[idx_imputadas],</span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>     <span class="at">y =</span> df_estaciones<span class="sc">$</span>Precipitacion[idx_imputadas] <span class="sc">+</span> <span class="dv">80</span>,</span>
+<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a>     <span class="at">labels =</span> <span class="st">"(imputado)"</span>, <span class="at">cex =</span> <span class="fl">0.7</span>, <span class="at">col =</span> <span class="st">"gray40"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="11_Analitica_Espacial_Ejercicios_files/figure-html/cell-10-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="11_Analitica_Espacial_Ejercicios_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="768"></p>
 </figure>
 </div>
 </div>
@@ -386,9 +393,9 @@ Precipitación promedio anual en estaciones altas: 1244.72 mm</code></pre>
 </section>
 <section id="comentarios-sobre-decisiones-de-diseño" class="level2">
 <h2 class="anchored" data-anchor-id="comentarios-sobre-decisiones-de-diseño">Comentarios sobre decisiones de diseño</h2>
-<p><strong>¿Por qué <code>fillna()</code> con la media?</strong> Se optó por imputar con la media aritmética de las estaciones válidas porque, en ausencia de datos auxiliares (series temporales, interpolación espacial, datos de estaciones vecinas), la media es el estimador insesgado más simple. En un contexto SIG real, sería preferible usar interpolación espacial (IDW o Kriging) aprovechando la ubicación geográfica de las estaciones, pero eso excede el alcance de este ejercicio introductorio.</p>
-<p><strong>¿Por qué indexación booleana y no <code>for</code>?</strong> El filtro <code>df[df["Elevacion"] &gt; 1000]</code> aplica la condición de forma vectorizada sobre toda la columna simultáneamente. Esto es más eficiente que iterar fila por fila y además produce código más legible y conciso, que es la filosofía central de Pandas y NumPy.</p>
-<p><strong>¿Por qué Haversine vectorizada?</strong> Al aplicar <code>np.radians()</code>, <code>np.sin()</code>, <code>np.cos()</code> directamente sobre las columnas (arreglos de NumPy), todas las operaciones trigonométricas se ejecutan en una sola pasada a nivel de C, evitando el overhead del intérprete de Python. Para un DataFrame de 4 filas la diferencia es imperceptible, pero para bases de datos con millones de puntos GPS la ganancia de rendimiento es crítica.</p>
+<p><strong>¿Por qué imputar con la media usando <code>na.rm = TRUE</code>?</strong> En R, si no se especifica <code>na.rm = TRUE</code>, la función <code>mean()</code> retorna <code>NA</code> cuando hay al menos un valor faltante en el vector. Esto es un comportamiento de diseño intencional: R fuerza al analista a tomar una decisión explícita sobre cómo manejar los datos incompletos. Imputar con la media es la técnica más simple cuando no se dispone de información espacial adicional. En un flujo SIG real, se podría usar interpolación IDW o Kriging con las coordenadas de las estaciones.</p>
+<p><strong>¿Por qué <code>dplyr::filter()</code> en lugar de indexación base?</strong> Ambas alternativas son válidas. La sintaxis <code>df[df$Elevacion &gt; 1000, ]</code> (R base) logra lo mismo que <code>df %&gt;% filter(Elevacion &gt; 1000)</code> (dplyr). Se eligió <code>dplyr</code> porque el operador pipe (<code>%&gt;%</code>) facilita la lectura secuencial del flujo de transformaciones, especialmente cuando se encadenan múltiples operaciones (filtrar, agrupar, resumir).</p>
+<p><strong>¿Por qué la Haversine funciona vectorizada sin paquetes extra en R?</strong> A diferencia de Python (donde se necesita NumPy para vectorizar operaciones matemáticas sobre arreglos), en R las funciones aritméticas y trigonométricas son vectorizadas de forma nativa. Los vectores numéricos (<code>c()</code>) son ciudadanos de primera clase del lenguaje, y operaciones como <code>sin(vector)</code> o <code>vector * pi / 180</code> se aplican automáticamente a cada elemento sin necesidad de importar librerías adicionales.</p>
 </section>
 
 </main>
