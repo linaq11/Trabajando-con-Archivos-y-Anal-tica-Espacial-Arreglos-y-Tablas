@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.550">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Lina">
+<meta name="dcterms.date" content="2026-03-15">
+
+<title>Capítulo 11 – Analítica Espacial: Arreglos y Tablas - Ejercicios</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="11_Analitica_Espacial_Ejercicios_files/libs/clipboard/clipboard.min.js"></script>
+<script src="11_Analitica_Espacial_Ejercicios_files/libs/quarto-html/quarto.js"></script>
+<script src="11_Analitica_Espacial_Ejercicios_files/libs/quarto-html/popper.min.js"></script>
+<script src="11_Analitica_Espacial_Ejercicios_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="11_Analitica_Espacial_Ejercicios_files/libs/quarto-html/anchor.min.js"></script>
+<link href="11_Analitica_Espacial_Ejercicios_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="11_Analitica_Espacial_Ejercicios_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="11_Analitica_Espacial_Ejercicios_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="11_Analitica_Espacial_Ejercicios_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="11_Analitica_Espacial_Ejercicios_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introducción" id="toc-introducción" class="nav-link active" data-scroll-target="#introducción">Introducción</a></li>
+  <li><a href="#ejercicio-1-vectorización-y-álgebra-espacial-haversine" id="toc-ejercicio-1-vectorización-y-álgebra-espacial-haversine" class="nav-link" data-scroll-target="#ejercicio-1-vectorización-y-álgebra-espacial-haversine">Ejercicio 1: Vectorización y álgebra espacial (Haversine)</a>
+  <ul class="collapse">
+  <li><a href="#construcción-del-dataframe-base" id="toc-construcción-del-dataframe-base" class="nav-link" data-scroll-target="#construcción-del-dataframe-base">Construcción del DataFrame base</a></li>
+  <li><a href="#función-haversine-vectorizada" id="toc-función-haversine-vectorizada" class="nav-link" data-scroll-target="#función-haversine-vectorizada">Función Haversine vectorizada</a></li>
+  <li><a href="#ejecución-y-resultados" id="toc-ejecución-y-resultados" class="nav-link" data-scroll-target="#ejecución-y-resultados">Ejecución y resultados</a></li>
+  <li><a href="#verificación-rápida" id="toc-verificación-rápida" class="nav-link" data-scroll-target="#verificación-rápida">Verificación rápida</a></li>
+  </ul></li>
+  <li><a href="#ejercicio-2-limpieza-filtros-y-agregación-tabular" id="toc-ejercicio-2-limpieza-filtros-y-agregación-tabular" class="nav-link" data-scroll-target="#ejercicio-2-limpieza-filtros-y-agregación-tabular">Ejercicio 2: Limpieza, filtros y agregación tabular</a>
+  <ul class="collapse">
+  <li><a href="#paso-1-creación-del-dataframe-con-datos-nulos" id="toc-paso-1-creación-del-dataframe-con-datos-nulos" class="nav-link" data-scroll-target="#paso-1-creación-del-dataframe-con-datos-nulos">Paso 1: Creación del DataFrame con datos nulos</a></li>
+  <li><a href="#paso-2-imputación-de-valores-nulos" id="toc-paso-2-imputación-de-valores-nulos" class="nav-link" data-scroll-target="#paso-2-imputación-de-valores-nulos">Paso 2: Imputación de valores nulos</a></li>
+  <li><a href="#paso-3-filtro-espacial-estaciones-altas" id="toc-paso-3-filtro-espacial-estaciones-altas" class="nav-link" data-scroll-target="#paso-3-filtro-espacial-estaciones-altas">Paso 3: Filtro espacial (estaciones altas)</a></li>
+  <li><a href="#paso-4-cálculo-final-precipitación-promedio-en-estaciones-altas" id="toc-paso-4-cálculo-final-precipitación-promedio-en-estaciones-altas" class="nav-link" data-scroll-target="#paso-4-cálculo-final-precipitación-promedio-en-estaciones-altas">Paso 4: Cálculo final – Precipitación promedio en estaciones altas</a></li>
+  <li><a href="#visualización-complementaria" id="toc-visualización-complementaria" class="nav-link" data-scroll-target="#visualización-complementaria">Visualización complementaria</a></li>
+  </ul></li>
+  <li><a href="#comentarios-sobre-decisiones-de-diseño" id="toc-comentarios-sobre-decisiones-de-diseño" class="nav-link" data-scroll-target="#comentarios-sobre-decisiones-de-diseño">Comentarios sobre decisiones de diseño</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="11_Analitica_Espacial_Ejercicios.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Capítulo 11 – Analítica Espacial: Arreglos y Tablas - Ejercicios</h1>
+<p class="subtitle lead">Programación SIG: Python, R y Julia</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Lina </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">March 15, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introducción" class="level2">
+<h2 class="anchored" data-anchor-id="introducción">Introducción</h2>
+<p>En este documento se resuelven los dos ejercicios propuestos en el Capítulo 11 del curso de Programación SIG, enfocados en operaciones vectorizadas con NumPy, manipulación tabular con Pandas, imputación de datos nulos y filtrado espacial.</p>
+<hr>
+</section>
+<section id="ejercicio-1-vectorización-y-álgebra-espacial-haversine" class="level2">
+<h2 class="anchored" data-anchor-id="ejercicio-1-vectorización-y-álgebra-espacial-haversine">Ejercicio 1: Vectorización y álgebra espacial (Haversine)</h2>
+<section id="construcción-del-dataframe-base" class="level3">
+<h3 class="anchored" data-anchor-id="construcción-del-dataframe-base">Construcción del DataFrame base</h3>
+<p>Primero construimos el DataFrame censal con las cuatro ciudades principales, tal como se hizo en la sección 11.7 del capítulo.</p>
+<div id="798c73aa" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># DataFrame censal base (sección 11.7)</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Ciudad"</span>:    [<span class="st">"Bogotá"</span>, <span class="st">"Medellín"</span>, <span class="st">"Cali"</span>, <span class="st">"Barranquilla"</span>],</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Region"</span>:    [<span class="st">"Andina"</span>, <span class="st">"Andina"</span>, <span class="st">"Pacífica"</span>, <span class="st">"Caribe"</span>],</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Poblacion"</span>: [<span class="dv">7181469</span>, <span class="dv">2529403</span>, <span class="dv">2227642</span>, <span class="dv">1206319</span>],</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Latitud"</span>:   [<span class="fl">4.7110</span>, <span class="fl">6.2442</span>, <span class="fl">3.4516</span>, <span class="fl">10.9685</span>],</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Longitud"</span>:  [<span class="op">-</span><span class="fl">74.0721</span>, <span class="op">-</span><span class="fl">75.5812</span>, <span class="op">-</span><span class="fl">76.5320</span>, <span class="op">-</span><span class="fl">74.7813</span>],</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Elevacion"</span>: [<span class="dv">2640</span>, <span class="dv">1495</span>, <span class="dv">1018</span>, <span class="dv">18</span>]</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"DataFrame base:"</span>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>DataFrame base:
+         Ciudad    Region  Poblacion  Latitud  Longitud  Elevacion
+0        Bogotá    Andina    7181469   4.7110  -74.0721       2640
+1      Medellín    Andina    2529403   6.2442  -75.5812       1495
+2          Cali  Pacífica    2227642   3.4516  -76.5320       1018
+3  Barranquilla    Caribe    1206319  10.9685  -74.7813         18</code></pre>
+</div>
+</div>
+</section>
+<section id="función-haversine-vectorizada" class="level3">
+<h3 class="anchored" data-anchor-id="función-haversine-vectorizada">Función Haversine vectorizada</h3>
+<p>La fórmula de Haversine calcula la distancia sobre la superficie de la esfera terrestre entre dos puntos dados en coordenadas geográficas. La implementamos de forma <strong>vectorizada</strong>, es decir, opera directamente sobre columnas completas del DataFrame sin necesidad de ciclos <code>for</code>.</p>
+<p>Se eligió este enfoque porque NumPy ejecuta las operaciones trigonométricas en bloque sobre arreglos completos usando rutinas optimizadas en C, lo cual es órdenes de magnitud más rápido que iterar fila por fila en Python puro.</p>
+<div id="de81c5c5" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calcular_distancias(df, lat_ref<span class="op">=</span><span class="fl">4.7110</span>, lon_ref<span class="op">=-</span><span class="fl">74.0721</span>):</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Calcula la distancia Haversine desde un punto de referencia (por defecto Bogotá)</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">    hacia todas las filas del DataFrame, de forma vectorizada.</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">    Argumentos:</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">        df (pd.DataFrame): DataFrame con columnas 'Latitud' y 'Longitud'.</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">        lat_ref (float): Latitud del punto de referencia en grados decimales.</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">        lon_ref (float): Longitud del punto de referencia en grados decimales.</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">    Retorna:</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">        pd.DataFrame: DataFrame original con la nueva columna 'Distancia_Bogota' (km).</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Radio medio de la Tierra en kilómetros</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    R <span class="op">=</span> <span class="fl">6371.0</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Convertir grados a radianes de forma vectorizada (columnas completas)</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    lat1 <span class="op">=</span> np.radians(lat_ref)</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    lon1 <span class="op">=</span> np.radians(lon_ref)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    lat2 <span class="op">=</span> np.radians(df[<span class="st">"Latitud"</span>].values)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    lon2 <span class="op">=</span> np.radians(df[<span class="st">"Longitud"</span>].values)</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Diferencias vectorizadas</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    dlat <span class="op">=</span> lat2 <span class="op">-</span> lat1</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    dlon <span class="op">=</span> lon2 <span class="op">-</span> lon1</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Fórmula de Haversine aplicada element-wise sobre los arreglos</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> np.sin(dlat <span class="op">/</span> <span class="dv">2</span>)<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> np.cos(lat1) <span class="op">*</span> np.cos(lat2) <span class="op">*</span> np.sin(dlon <span class="op">/</span> <span class="dv">2</span>)<span class="op">**</span><span class="dv">2</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    c <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> np.arctan2(np.sqrt(a), np.sqrt(<span class="dv">1</span> <span class="op">-</span> a))</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Distancia en kilómetros</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    distancia_km <span class="op">=</span> R <span class="op">*</span> c</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Agregar la nueva columna al DataFrame</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    df_resultado <span class="op">=</span> df.copy()</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    df_resultado[<span class="st">"Distancia_Bogota"</span>] <span class="op">=</span> np.<span class="bu">round</span>(distancia_km, <span class="dv">2</span>)</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df_resultado</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="ejecución-y-resultados" class="level3">
+<h3 class="anchored" data-anchor-id="ejecución-y-resultados">Ejecución y resultados</h3>
+<div id="5885edec" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df_con_distancias <span class="op">=</span> calcular_distancias(df)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"DataFrame con distancias desde Bogotá (km):</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_con_distancias[[<span class="st">"Ciudad"</span>, <span class="st">"Latitud"</span>, <span class="st">"Longitud"</span>, <span class="st">"Distancia_Bogota"</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>DataFrame con distancias desde Bogotá (km):
+
+         Ciudad  Latitud  Longitud  Distancia_Bogota
+0        Bogotá   4.7110  -74.0721              0.00
+1      Medellín   6.2442  -75.5812            238.67
+2          Cali   3.4516  -76.5320            306.67
+3  Barranquilla  10.9685  -74.7813            700.17</code></pre>
+</div>
+</div>
+</section>
+<section id="verificación-rápida" class="level3">
+<h3 class="anchored" data-anchor-id="verificación-rápida">Verificación rápida</h3>
+<p>La distancia Bogotá–Bogotá debe ser 0 km, y las distancias a las demás ciudades deben ser coherentes con la geografía colombiana (Medellín ~250 km, Cali ~300 km, Barranquilla ~700 km).</p>
+<div id="f63ccbf1" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Verificación de distancias:"</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _, fila <span class="kw">in</span> df_con_distancias.iterrows():</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  Bogotá → </span><span class="sc">{</span>fila[<span class="st">'Ciudad'</span>]<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>fila[<span class="st">'Distancia_Bogota'</span>]<span class="sc">}</span><span class="ss"> km"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Verificación de distancias:
+  Bogotá → Bogotá: 0.0 km
+  Bogotá → Medellín: 238.67 km
+  Bogotá → Cali: 306.67 km
+  Bogotá → Barranquilla: 700.17 km</code></pre>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="ejercicio-2-limpieza-filtros-y-agregación-tabular" class="level2">
+<h2 class="anchored" data-anchor-id="ejercicio-2-limpieza-filtros-y-agregación-tabular">Ejercicio 2: Limpieza, filtros y agregación tabular</h2>
+<section id="paso-1-creación-del-dataframe-con-datos-nulos" class="level3">
+<h3 class="anchored" data-anchor-id="paso-1-creación-del-dataframe-con-datos-nulos">Paso 1: Creación del DataFrame con datos nulos</h3>
+<p>Creamos el DataFrame de estaciones meteorológicas tal como lo indica el enunciado. Usamos <code>np.nan</code> como representación del valor nulo en Python/Pandas, ya que es el estándar para datos faltantes en columnas numéricas de tipo <code>float</code>.</p>
+<div id="db32904b" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Creación del DataFrame con datos nulos (sensores fallidos en Costa y Sabana)</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>df_estaciones <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Estacion"</span>:      [<span class="st">"Páramo"</span>, <span class="st">"Valle"</span>, <span class="st">"Costa"</span>, <span class="st">"Selva"</span>, <span class="st">"Sabana"</span>],</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Elevacion"</span>:     [<span class="dv">3200</span>, <span class="dv">1500</span>, <span class="dv">15</span>, <span class="dv">200</span>, <span class="dv">2600</span>],</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Precipitacion"</span>: [<span class="fl">850.5</span>, <span class="fl">1200.0</span>, np.nan, <span class="fl">3000.5</span>, np.nan]</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"DataFrame original (con datos nulos):</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_estaciones)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Valores nulos por columna:</span><span class="ch">\n</span><span class="sc">{</span>df_estaciones<span class="sc">.</span>isna()<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>DataFrame original (con datos nulos):
+
+  Estacion  Elevacion  Precipitacion
+0   Páramo       3200          850.5
+1    Valle       1500         1200.0
+2    Costa         15            NaN
+3    Selva        200         3000.5
+4   Sabana       2600            NaN
+
+Valores nulos por columna:
+Estacion         0
+Elevacion        0
+Precipitacion    2
+dtype: int64</code></pre>
+</div>
+</div>
+</section>
+<section id="paso-2-imputación-de-valores-nulos" class="level3">
+<h3 class="anchored" data-anchor-id="paso-2-imputación-de-valores-nulos">Paso 2: Imputación de valores nulos</h3>
+<p>Los sensores de la Costa y la Sabana fallaron. Rellenamos los valores nulos con la <strong>media</strong> de las estaciones que sí tienen datos válidos.</p>
+<p>Se eligió <code>fillna()</code> con la media porque es la técnica de imputación más simple y adecuada cuando no se dispone de información auxiliar (como una serie temporal o estaciones vecinas). Pandas calcula la media automáticamente ignorando los <code>NaN</code> por defecto en <code>.mean()</code>.</p>
+<div id="75f1d701" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcular la media de precipitación ignorando nulos</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>media_precipitacion <span class="op">=</span> df_estaciones[<span class="st">"Precipitacion"</span>].mean()</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Media de precipitación (estaciones válidas): </span><span class="sc">{</span>media_precipitacion<span class="sc">:.2f}</span><span class="ss"> mm</span><span class="ch">\n</span><span class="ss">"</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Imputar los valores nulos con la media calculada</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>df_estaciones[<span class="st">"Precipitacion"</span>] <span class="op">=</span> df_estaciones[<span class="st">"Precipitacion"</span>].fillna(media_precipitacion)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"DataFrame después de imputación:</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_estaciones)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Media de precipitación (estaciones válidas): 1683.67 mm
+
+DataFrame después de imputación:
+
+  Estacion  Elevacion  Precipitacion
+0   Páramo       3200     850.500000
+1    Valle       1500    1200.000000
+2    Costa         15    1683.666667
+3    Selva        200    3000.500000
+4   Sabana       2600    1683.666667</code></pre>
+</div>
+</div>
+</section>
+<section id="paso-3-filtro-espacial-estaciones-altas" class="level3">
+<h3 class="anchored" data-anchor-id="paso-3-filtro-espacial-estaciones-altas">Paso 3: Filtro espacial (estaciones altas)</h3>
+<p>Extraemos en un nuevo DataFrame solo las estaciones cuya elevación sea estrictamente mayor a 1000 metros. Usamos <strong>indexación booleana</strong> directamente sobre la columna <code>Elevacion</code>, lo cual es más eficiente y legible que un ciclo <code>for</code> con condicionales.</p>
+<div id="95d367cd" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filtro booleano: elevación &gt; 1000 m</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>estaciones_altas <span class="op">=</span> df_estaciones[df_estaciones[<span class="st">"Elevacion"</span>] <span class="op">&gt;</span> <span class="dv">1000</span>].copy()</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Estaciones altas (Elevación &gt; 1000 m):</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(estaciones_altas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Estaciones altas (Elevación &gt; 1000 m):
+
+  Estacion  Elevacion  Precipitacion
+0   Páramo       3200     850.500000
+1    Valle       1500    1200.000000
+4   Sabana       2600    1683.666667</code></pre>
+</div>
+</div>
+</section>
+<section id="paso-4-cálculo-final-precipitación-promedio-en-estaciones-altas" class="level3">
+<h3 class="anchored" data-anchor-id="paso-4-cálculo-final-precipitación-promedio-en-estaciones-altas">Paso 4: Cálculo final – Precipitación promedio en estaciones altas</h3>
+<div id="063a2b36" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>precipitacion_promedio_altas <span class="op">=</span> estaciones_altas[<span class="st">"Precipitacion"</span>].mean()</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Precipitación promedio anual en estaciones altas: "</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"</span><span class="sc">{</span>precipitacion_promedio_altas<span class="sc">:.2f}</span><span class="ss"> mm"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Precipitación promedio anual en estaciones altas: 1244.72 mm</code></pre>
+</div>
+</div>
+</section>
+<section id="visualización-complementaria" class="level3">
+<h3 class="anchored" data-anchor-id="visualización-complementaria">Visualización complementaria</h3>
+<p>Generamos un gráfico de barras para comparar visualmente la precipitación entre todas las estaciones, destacando cuáles fueron imputadas.</p>
+<div id="8134ec5e" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">4</span>))</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>colores <span class="op">=</span> [<span class="st">"#2ecc71"</span> <span class="cf">if</span> elev <span class="op">&gt;</span> <span class="dv">1000</span> <span class="cf">else</span> <span class="st">"#95a5a6"</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>           <span class="cf">for</span> elev <span class="kw">in</span> df_estaciones[<span class="st">"Elevacion"</span>]]</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>ax.bar(df_estaciones[<span class="st">"Estacion"</span>], df_estaciones[<span class="st">"Precipitacion"</span>], color<span class="op">=</span>colores)</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Precipitación Anual (mm)"</span>)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Precipitación por Estación Meteorológica"</span>)</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>ax.axhline(y<span class="op">=</span>precipitacion_promedio_altas, color<span class="op">=</span><span class="st">"red"</span>, linestyle<span class="op">=</span><span class="st">"--"</span>,</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>           label<span class="op">=</span><span class="ss">f"Promedio estaciones altas: </span><span class="sc">{</span>precipitacion_promedio_altas<span class="sc">:.0f}</span><span class="ss"> mm"</span>)</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Anotar estaciones imputadas</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, est <span class="kw">in</span> <span class="bu">enumerate</span>(df_estaciones[<span class="st">"Estacion"</span>]):</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> est <span class="kw">in</span> [<span class="st">"Costa"</span>, <span class="st">"Sabana"</span>]:</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>        ax.annotate(<span class="st">"(imputado)"</span>, (i, df_estaciones[<span class="st">"Precipitacion"</span>].iloc[i] <span class="op">+</span> <span class="dv">50</span>),</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>                    ha<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="dv">8</span>, color<span class="op">=</span><span class="st">"gray"</span>)</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="11_Analitica_Espacial_Ejercicios_files/figure-html/cell-10-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="comentarios-sobre-decisiones-de-diseño" class="level2">
+<h2 class="anchored" data-anchor-id="comentarios-sobre-decisiones-de-diseño">Comentarios sobre decisiones de diseño</h2>
+<p><strong>¿Por qué <code>fillna()</code> con la media?</strong> Se optó por imputar con la media aritmética de las estaciones válidas porque, en ausencia de datos auxiliares (series temporales, interpolación espacial, datos de estaciones vecinas), la media es el estimador insesgado más simple. En un contexto SIG real, sería preferible usar interpolación espacial (IDW o Kriging) aprovechando la ubicación geográfica de las estaciones, pero eso excede el alcance de este ejercicio introductorio.</p>
+<p><strong>¿Por qué indexación booleana y no <code>for</code>?</strong> El filtro <code>df[df["Elevacion"] &gt; 1000]</code> aplica la condición de forma vectorizada sobre toda la columna simultáneamente. Esto es más eficiente que iterar fila por fila y además produce código más legible y conciso, que es la filosofía central de Pandas y NumPy.</p>
+<p><strong>¿Por qué Haversine vectorizada?</strong> Al aplicar <code>np.radians()</code>, <code>np.sin()</code>, <code>np.cos()</code> directamente sobre las columnas (arreglos de NumPy), todas las operaciones trigonométricas se ejecutan en una sola pasada a nivel de C, evitando el overhead del intérprete de Python. Para un DataFrame de 4 filas la diferencia es imperceptible, pero para bases de datos con millones de puntos GPS la ganancia de rendimiento es crítica.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
